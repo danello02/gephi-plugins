@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.daniel.generator.bamodel.ageing
+OpenIDE-Module-Localizing-Bundle: org/daniel/generator/bamodel/ageing/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
