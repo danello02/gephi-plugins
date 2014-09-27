@@ -23,34 +23,8 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace min="168" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="MLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="M0Label" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="NLabel" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="159" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="NField" max="32767" attributes="0"/>
-                  <Component id="MField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="M0Field" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="32767" attributes="0"/>
-          </Group>
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                      <Component id="ageingLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="HomographicAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="NoneAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="LineAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="ExponentialAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -61,27 +35,49 @@
                           </Group>
                           <Component id="ageingIntervalLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      <Component id="ageingLabel" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                  <Component id="growingInterval" min="-2" pref="100" max="-2" attributes="0"/>
-                                  <Component id="ageingInterval" min="-2" pref="100" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="startAge" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="randomiseCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="MLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="M0Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="NLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="11" max="32767" attributes="0"/>
+              <EmptySpace pref="33" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                      <Component id="HomographicAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="NoneAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="LineAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="ExponentialAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="NField" max="32767" attributes="0"/>
+                              <Component id="MField" alignment="0" max="32767" attributes="0"/>
+                              <Component id="M0Field" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <Component id="ageingInterval" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="growingInterval" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="startAge" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="randomiseCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="NField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="NLabel" alignment="3" min="-2" max="-2" attributes="0"/>
