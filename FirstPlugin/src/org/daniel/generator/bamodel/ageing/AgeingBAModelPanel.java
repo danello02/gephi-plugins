@@ -314,6 +314,8 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
                         growingInterval.setVisible(false);
                     }
                 } else {
+                    growingIntervalLabel.setVisible(false);
+                    growingInterval.setVisible(false);
                     ageingIntervalLabel.setVisible(false);
                     ageingInterval.setVisible(false);
                 }
