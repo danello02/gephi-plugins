@@ -19,10 +19,10 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Implementation of this generator base on generalized BA Model.
- * Algorithm was modified with ageing and growing functions which
- * develop orginal preferential attachment of nodes.
- * 
+ * Implementation of this generator base on generalized BA Model. Algorithm was
+ * modified with ageing and growing functions which develop original
+ * preferential attachment of nodes.
+ *
  * @author Daniel Bocian
  */
 @ServiceProvider(service = Generator.class)
@@ -35,7 +35,7 @@ public class AgeingBAModel implements Generator {
     private int N = 200;
     private int m0 = 1;
     private int M = 1;
-    private int ageingType = 1; //1,2,3
+    private int ageingType = 0; //0, 1,2,3
 
     private boolean randomise = true;
     private double startAge = 0.2;
@@ -180,64 +180,50 @@ public class AgeingBAModel implements Generator {
             }
             Progress.progress(progressTicket);
 
-            //Change age of all existing nodes beyond just added
-            switch (ageingType) {
-                case 1:
-                    //Line groiwng and ageing
-                    for (int j = 0; j < i && !cancel; j++) {
-                        if (age[j][1] >= 0.0) {
-                            if (age[j][0] + age[j][1] > 1.0) {
-                                age[j][0] = 1.0;
-                                age[j][1] = -1.0;
-                            } else {
-                                age[j][0] += age[j][1];
-                            }
-                        } else if (age[j][2] >= 0.0) {
-                            if (age[j][0] - age[j][2] < 0.2) {
-                                age[j][0] = 0.2;
-                                age[j][2] = -1.0;
-                            } else {
-                                age[j][0] -= age[j][2];
-                            }
-                        }
-                    }
-                    break;
-
-                case 2:
-                    //Exponential function
-                    for (int j = 0; j < i && !cancel; j++) {
-                        age[j][0] *= age[j][2];
-                    }
-                    break;
-
-                case 3:
-                    //Homographic transformations
-                    for (int j = 0; j < i && !cancel; j++) {
-                        age[j][0] /= i;
-                    }
-                    break;
-
-                default:
-                    //Line groiwng and ageing
-                    for (int j = 0; j < i && !cancel; j++) {
-                        if (age[j][1] >= 0.0) {
-                            if (age[j][0] + age[j][1] > 1.0) {
-                                age[j][0] = 1.0;
-                                age[j][1] = -1.0;
-                            } else {
-                                age[j][0] += age[j][1];
-                            }
-                        } else if (age[j][2] >= 0.0) {
-                            if (age[j][0] - age[j][2] < 0.2) {
-                                age[j][0] = 0.2;
-                                age[j][2] = -1.0;
-                            } else {
-                                age[j][0] -= age[j][2];
+            //Change age of all existing nodes beyond just added 
+            //(ageingType == 0 mean none ageing)
+            if (ageingType != 0) {
+                switch (ageingType) {
+                    case 1:
+                        //Line groiwng and ageing
+                        for (int j = 0; j < i && !cancel; j++) {
+                            if (age[j][1] >= 0.0) {
+                                if (age[j][0] + age[j][1] > 1.0) {
+                                    age[j][0] = 1.0;
+                                    age[j][1] = -1.0;
+                                } else {
+                                    age[j][0] += age[j][1];
+                                }
+                            } else if (age[j][2] >= 0.0) {
+                                if (age[j][0] - age[j][2] < 0.2) {
+                                    age[j][0] = 0.2;
+                                    age[j][2] = -1.0;
+                                } else {
+                                    age[j][0] -= age[j][2];
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
 
+                    case 2:
+                        //Exponential function
+                        for (int j = 0; j < i && !cancel; j++) {
+                            age[j][0] *= age[j][2];
+                        }
+                        break;
+
+                    case 3:
+                        //Homographic transformations
+                        for (int j = 0; j < i && !cancel; j++) {
+                            age[j][0] /= i;
+                        }
+                        break;
+
+                    default:
+                        ; //None ageing
+                        break;
+
+                }
             }
         }
     }

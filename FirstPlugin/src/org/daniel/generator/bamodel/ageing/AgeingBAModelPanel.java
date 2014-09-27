@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.daniel.generator.bamodel.ageing;
 
 import org.gephi.lib.validation.BetweenZeroAndOneValidator;
@@ -27,15 +26,16 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
         initComponents();
         showDataFields();
     }
-    
+
     public static ValidationPanel createValidationPanel(AgeingBAModelPanel innerPanel) {
         ValidationPanel valPanel = new ValidationPanel();
-        if (innerPanel == null) 
+        if (innerPanel == null) {
             innerPanel = new AgeingBAModelPanel();
+        }
         valPanel.setInnerComponent(innerPanel);
-        
+
         ValidationGroup group = valPanel.getValidationGroup();
-        
+
         group.add(innerPanel.NField, Validators.REQUIRE_NON_EMPTY_STRING, new PositiveNumberValidator());
         group.add(innerPanel.M0Field, Validators.REQUIRE_NON_EMPTY_STRING, new PositiveNumberValidator());
         group.add(innerPanel.M0Field, Validators.REQUIRE_NON_EMPTY_STRING, new M0Validator(innerPanel));
@@ -44,7 +44,7 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
         group.add(innerPanel.startAge, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new BetweenZeroAndOneValidator());
         group.add(innerPanel.growingInterval, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new BetweenZeroAndOneValidator());
         group.add(innerPanel.ageingInterval, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new GettingOldParameterValidator(innerPanel));
-        
+
         return valPanel;
     }
 
@@ -76,6 +76,7 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
         growingInterval = new javax.swing.JTextField();
         ageingIntervalLabel = new javax.swing.JLabel();
         ageingInterval = new javax.swing.JTextField();
+        NoneAgeing = new javax.swing.JRadioButton();
 
         NField.setText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.NField.text")); // NOI18N
         NField.setToolTipText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.MField.toolTipText.Eng")); // NOI18N
@@ -96,7 +97,6 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
         MLabel.setToolTipText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.MLabel.toolTipText.Eng")); // NOI18N
 
         ageingTypeGroup.add(LineAgeing);
-        LineAgeing.setSelected(true);
         LineAgeing.setText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.LineAgeing.text.Eng")); // NOI18N
         LineAgeing.setToolTipText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.LineAgeing.toolTipText.Eng")); // NOI18N
         LineAgeing.addActionListener(new java.awt.event.ActionListener() {
@@ -147,6 +147,16 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
 
         ageingInterval.setText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.ageingInterval.text")); // NOI18N
 
+        ageingTypeGroup.add(NoneAgeing);
+        NoneAgeing.setSelected(true);
+        NoneAgeing.setText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.NoneAgeing.text.Eng")); // NOI18N
+        NoneAgeing.setToolTipText(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.NoneAgeing.toolTipText.Eng")); // NOI18N
+        NoneAgeing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NoneAgeingActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -154,34 +164,43 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(ageingLabel)
-                        .addComponent(MLabel)
-                        .addComponent(M0Label)
-                        .addComponent(NLabel)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(startAgeLabel)
-                            .addComponent(randomiseLabel)
-                            .addComponent(growingIntervalLabel)))
-                    .addComponent(ageingIntervalLabel, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(73, 73, 73)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(HomographicAgeing)
-                        .addComponent(ExponentialAgeing)
-                        .addComponent(LineAgeing)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(NField)
-                            .addComponent(MField)
-                            .addComponent(M0Field, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(MLabel)
+                    .addComponent(M0Label)
+                    .addComponent(NLabel))
+                .addGap(159, 159, 159)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(NField)
+                    .addComponent(MField)
+                    .addComponent(M0Field, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(randomiseCheckBox)
-                        .addGap(79, 79, 79))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(growingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(startAge, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(ageingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(56, 56, 56))
+                        .addGap(10, 10, 10)
+                        .addComponent(ageingLabel)
+                        .addGap(76, 76, 76)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(HomographicAgeing)
+                            .addComponent(NoneAgeing)
+                            .addComponent(LineAgeing)
+                            .addComponent(ExponentialAgeing)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(randomiseLabel)
+                                .addComponent(startAgeLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(growingIntervalLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(ageingIntervalLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(growingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(ageingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(startAge, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(randomiseCheckBox))))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,31 +217,33 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(MField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(MLabel))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LineAgeing)
+                    .addComponent(NoneAgeing)
                     .addComponent(ageingLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LineAgeing)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(ExponentialAgeing)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(HomographicAgeing)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(randomiseLabel)
-                    .addComponent(randomiseCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(randomiseCheckBox)
+                    .addComponent(randomiseLabel))
+                .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startAge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(startAgeLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(growingIntervalLabel)
-                    .addComponent(growingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(growingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(growingIntervalLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ageingInterval, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ageingIntervalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
 
         NField.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(AgeingBAModelPanel.class, "AgeingBAModelPanel.NField.AccessibleContext.accessibleName")); // NOI18N
@@ -246,8 +267,14 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
         showDataFields();
     }//GEN-LAST:event_HomographicAgeingActionPerformed
 
+    private void NoneAgeingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NoneAgeingActionPerformed
+        showDataFields();
+    }//GEN-LAST:event_NoneAgeingActionPerformed
+
     public void showDataFields() {
-        if (randomiseCheckBox.isSelected()) {
+        if (NoneAgeing.isSelected()) {
+            randomiseCheckBox.setVisible(false);
+            randomiseLabel.setVisible(false);
             startAgeLabel.setVisible(false);
             startAge.setVisible(false);
             growingIntervalLabel.setVisible(false);
@@ -255,26 +282,41 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
             ageingIntervalLabel.setVisible(false);
             ageingInterval.setVisible(false);
         } else {
-            int type = 1;
-            if (LineAgeing.isSelected()) type = 1;
-            else if (ExponentialAgeing.isSelected()) type = 2;
-            else if (HomographicAgeing.isSelected()) type = 3;
-
-            startAgeLabel.setVisible(true);
-            startAge.setVisible(true);
-            if (type < 3) {
-                ageingIntervalLabel.setVisible(true);
-                ageingInterval.setVisible(true);
-                if (type < 2) {
-                    growingIntervalLabel.setVisible(true);
-                    growingInterval.setVisible(true);
-                } else {
-                    growingIntervalLabel.setVisible(false);
-                    growingInterval.setVisible(false);
-                }
-            } else {
+            randomiseCheckBox.setVisible(true);
+            randomiseLabel.setVisible(true);
+            if (randomiseCheckBox.isSelected()) {
+                startAgeLabel.setVisible(false);
+                startAge.setVisible(false);
+                growingIntervalLabel.setVisible(false);
+                growingInterval.setVisible(false);
                 ageingIntervalLabel.setVisible(false);
                 ageingInterval.setVisible(false);
+            } else {
+                int type = 1;
+                if (LineAgeing.isSelected()) {
+                    type = 1;
+                } else if (ExponentialAgeing.isSelected()) {
+                    type = 2;
+                } else if (HomographicAgeing.isSelected()) {
+                    type = 3;
+                }
+
+                startAgeLabel.setVisible(true);
+                startAge.setVisible(true);
+                if (type < 3) {
+                    ageingIntervalLabel.setVisible(true);
+                    ageingInterval.setVisible(true);
+                    if (type < 2) {
+                        growingIntervalLabel.setVisible(true);
+                        growingInterval.setVisible(true);
+                    } else {
+                        growingIntervalLabel.setVisible(false);
+                        growingInterval.setVisible(false);
+                    }
+                } else {
+                    ageingIntervalLabel.setVisible(false);
+                    ageingInterval.setVisible(false);
+                }
             }
         }
     }
@@ -289,6 +331,7 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
     private javax.swing.JLabel MLabel;
     protected javax.swing.JTextField NField;
     private javax.swing.JLabel NLabel;
+    protected javax.swing.JRadioButton NoneAgeing;
     protected javax.swing.JTextField ageingInterval;
     private javax.swing.JLabel ageingIntervalLabel;
     private javax.swing.JLabel ageingLabel;
@@ -302,6 +345,7 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private static class MValidator implements Validator<String> {
+
         AgeingBAModelPanel panel;
 
         public MValidator(AgeingBAModelPanel panel) {
@@ -314,10 +358,10 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
 
             try {
                 Integer m0 = Integer.parseInt(panel.M0Field.getText());
-                Integer M  = Integer.parseInt(panel.MField.getText());
+                Integer M = Integer.parseInt(panel.MField.getText());
                 result = M <= m0;
+            } catch (Exception e) {
             }
-            catch (Exception e) { }
             if (!result) {
                 //String message = "M musi być mniejsze lub równe M0";
                 String message = "M must be lower or equal M0";
@@ -329,8 +373,9 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
     }
 
     private static class M0Validator implements Validator<String> {
+
         AgeingBAModelPanel panel;
-        
+
         public M0Validator(AgeingBAModelPanel panel) {
             this.panel = panel;
         }
@@ -341,10 +386,10 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
 
             try {
                 Integer N = Integer.parseInt(panel.NField.getText());
-                Integer M0  = Integer.parseInt(panel.M0Field.getText());
+                Integer M0 = Integer.parseInt(panel.M0Field.getText());
                 result = M0 <= N;
+            } catch (Exception e) {
             }
-            catch (Exception e) { }
             if (!result) {
                 //String message = "M0 musi być mniejsze lub równe N";
                 String message = "M0 must be lower or equal N";
@@ -354,16 +399,15 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
             return result;
         }
     }
-    
-    private static class GettingOldParameterValidator implements Validator<String>
-    {
+
+    private static class GettingOldParameterValidator implements Validator<String> {
 
         AgeingBAModelPanel panel;
-        
+
         public GettingOldParameterValidator(AgeingBAModelPanel panel) {
-            this.panel = panel;        
+            this.panel = panel;
         }
-        
+
         @Override
         public boolean validate(Problems problems, String compName, String model) {
             boolean result = false;
@@ -377,19 +421,19 @@ public class AgeingBAModelPanel extends javax.swing.JPanel {
                     message = "Getting old interval must be grater than 0.0";
                 } else {
                     result = s <= 1.0;
-                    result &= s>= 0.0;
+                    result &= s >= 0.0;
                 }
             } catch (Exception e) {
                 //message = "Interwał starzenia musi być liczbą";
                 message = "Getting old interval must be a number";
                 e.printStackTrace();
-            }     
-            
+            }
+
             if (!result) {
                 problems.add(message);
             }
             return result;
         }
-        
+
     }
 }

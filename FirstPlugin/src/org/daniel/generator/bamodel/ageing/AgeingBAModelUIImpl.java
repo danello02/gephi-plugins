@@ -41,9 +41,10 @@ public class AgeingBAModelUIImpl implements AgeingBAModelUI {
         panel.M0Field.setText(String.valueOf(this.generator.getM0()));
         panel.MField.setText(String.valueOf(this.generator.getM()));
         int type = this.generator.getAgeingType();
+        if (type == 1) panel.LineAgeing.setSelected(true);
         if (type == 2) panel.ExponentialAgeing.setSelected(true);
         else if (type == 3) panel.HomographicAgeing.setSelected(true);
-        else panel.LineAgeing.setSelected(true); // LineAgeing type is default and type == 1
+        else panel.NoneAgeing.setSelected(true); // NoneAgeing type is default (type == 0)
         panel.randomiseCheckBox.setSelected(this.generator.isRandomise());
         panel.startAge.setText(String.valueOf(this.generator.getStartAge()));
         panel.growingInterval.setText(String.valueOf(this.generator.getGrowingInterval()));
@@ -57,8 +58,9 @@ public class AgeingBAModelUIImpl implements AgeingBAModelUI {
         generator.setN(Integer.parseInt(panel.NField.getText()));
         generator.setM0(Integer.parseInt(panel.M0Field.getText()));
         generator.setM(Integer.parseInt(panel.MField.getText()));
-        int type = 1;
-        if (panel.LineAgeing.isSelected()) type = 1;
+        int type = 0;
+        if (panel.NoneAgeing.isSelected()) type = 0;
+        else if (panel.LineAgeing.isSelected()) type = 1;
         else if (panel.ExponentialAgeing.isSelected()) type = 2;
         else if (panel.HomographicAgeing.isSelected()) type = 3;
         generator.setAgeingType(type);

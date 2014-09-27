@@ -24,44 +24,57 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace min="28" max="32767" attributes="0"/>
+              <EmptySpace min="168" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                      <Component id="ageingLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="MLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="M0Label" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="NLabel" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                          <Component id="startAgeLabel" min="-2" max="-2" attributes="0"/>
-                          <Component id="randomiseLabel" min="-2" max="-2" attributes="0"/>
-                          <Component id="growingIntervalLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="MLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="M0Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="NLabel" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="159" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="NField" max="32767" attributes="0"/>
+                  <Component id="MField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="M0Field" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      <Component id="ageingLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="HomographicAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="NoneAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="LineAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="ExponentialAgeing" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="ageingIntervalLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                      <Component id="HomographicAgeing" min="-2" max="-2" attributes="0"/>
-                      <Component id="ExponentialAgeing" min="-2" max="-2" attributes="0"/>
-                      <Component id="LineAgeing" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="NField" max="32767" attributes="0"/>
-                          <Component id="MField" alignment="0" max="32767" attributes="0"/>
-                          <Component id="M0Field" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="randomiseLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="startAgeLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="growingIntervalLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="ageingIntervalLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                  <Component id="growingInterval" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Component id="ageingInterval" min="-2" pref="100" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="startAge" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="randomiseCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="randomiseCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="79" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                      <Component id="growingInterval" min="-2" pref="100" max="-2" attributes="0"/>
-                      <Component id="startAge" min="-2" pref="100" max="-2" attributes="0"/>
-                      <Component id="ageingInterval" min="-2" pref="100" max="-2" attributes="0"/>
-                  </Group>
               </Group>
-              <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
+              <EmptySpace pref="11" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -83,36 +96,38 @@
                   <Component id="MField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="MLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="LineAgeing" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="NoneAgeing" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ageingLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="LineAgeing" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="ExponentialAgeing" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="HomographicAgeing" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="randomiseLabel" min="-2" max="-2" attributes="0"/>
                   <Component id="randomiseCheckBox" min="-2" max="-2" attributes="0"/>
+                  <Component id="randomiseLabel" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="startAge" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="startAgeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="growingIntervalLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="growingInterval" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="growingIntervalLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="ageingInterval" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ageingIntervalLabel" alignment="3" min="-2" pref="14" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="85" max="32767" attributes="0"/>
+              <EmptySpace pref="116" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -216,7 +231,6 @@
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="ageingTypeGroup"/>
         </Property>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/daniel/generator/bamodel/ageing/Bundle.properties" key="AgeingBAModelPanel.LineAgeing.text.Eng" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
@@ -368,6 +382,27 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="FirstGeneratorPanel_ageingIntervall"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="NoneAgeing">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="ageingTypeGroup"/>
+        </Property>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/daniel/generator/bamodel/ageing/Bundle.properties" key="AgeingBAModelPanel.NoneAgeing.text.Eng" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/daniel/generator/bamodel/ageing/Bundle.properties" key="AgeingBAModelPanel.NoneAgeing.toolTipText.Eng" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="NoneAgeingActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
       </AuxValues>
     </Component>
   </SubComponents>
