@@ -31,6 +31,7 @@ public class AgeingBAModel implements Generator {
     private boolean cancel = false;
 
     private ProgressTicket progressTicket;
+    private Random random;
 
     private int N = 200;
     private int m0 = 1;
@@ -43,6 +44,7 @@ public class AgeingBAModel implements Generator {
     private double ageingInterval = 0.1;
 
     public AgeingBAModel() {
+        random = new Random();
     }
 
     @Override
@@ -52,7 +54,6 @@ public class AgeingBAModel implements Generator {
         }
 
         Progress.start(progressTicket, m0 + (N - m0) * M);
-        Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
         //double sumDegrees = 0.0; //sum of all nodes degrees
@@ -80,17 +81,7 @@ public class AgeingBAModel implements Generator {
             nodes[i] = node;
             degrees[i] = 0;
 
-            if (randomise) {
-                //Random age parameters for node
-                age[i][0] = random.nextDouble();
-                age[i][1] = random.nextDouble() / 2;
-                age[i][2] = random.nextDouble() / 2;
-            } else {
-                //Init age data
-                age[i][0] = startAge;
-                age[i][1] = growingInterval;
-                age[i][2] = ageingInterval;
-            }
+            age[i] = createAgeData();
 
             container.addNode(node);
             Progress.progress(progressTicket);
@@ -118,17 +109,7 @@ public class AgeingBAModel implements Generator {
             nodes[i] = node;
             degrees[i] = 0;
 
-            if (randomise) {
-                //Random age parameters for node
-                age[i][0] = random.nextDouble();
-                age[i][1] = random.nextDouble() / 2;
-                age[i][2] = random.nextDouble() / 2;
-            } else {
-                //Init age data for node
-                age[i][0] = startAge;
-                age[i][1] = growingInterval;
-                age[i][2] = ageingInterval;
-            }
+            age[i]= createAgeData();
 
             container.addNode(node);
 
@@ -215,7 +196,7 @@ public class AgeingBAModel implements Generator {
                     case 3:
                         //Homographic transformations
                         for (int j = 0; j < i && !cancel; j++) {
-                            age[j][0] /= i;
+                            age[j][0] = age[j][1]/++age[j][2];
                         }
                         break;
 
@@ -228,6 +209,32 @@ public class AgeingBAModel implements Generator {
         }
     }
 
+    private double[] createAgeData () {
+        double[] age = new double[3]; 
+        if (randomise) {
+            //Random age parameters for node
+            age[0] = random.nextDouble();
+            age[1] = random.nextDouble() / 2;
+            age[2] = random.nextDouble() / 2;
+        } else {
+            //Init age data for node
+            age[0] = startAge;
+            age[1] = growingInterval;
+            age[2] = ageingInterval;
+        }
+        
+        //Homographic function use age table in diffrent way.
+        //age[i][0] - acctually age - [0,1]
+        //age[i][1] - start age - [0,1]
+        //age[i][2] - iteration count - int
+        if (ageingType == 3) {
+            age[1] = age[0];
+            age[2] = 1.0;
+        }
+        return age;
+    }
+            
+    
     public int getN() {
         return N;
     }
