@@ -115,6 +115,7 @@ public class AgeingBAModel implements Generator {
 
             //Add M edge out of the new node
             for (int m = 0; m < M && !cancel;) {
+                
                 double norm = 0.0;
 
                 double sumDegrees = 0.0;
@@ -214,8 +215,8 @@ public class AgeingBAModel implements Generator {
         if (randomise) {
             //Random age parameters for node
             age[0] = random.nextDouble();
-            age[1] = random.nextDouble() / 2;
-            age[2] = random.nextDouble() / 2;
+            age[1] = random.nextDouble();
+            age[2] = ageingType == 2 ? random.nextDouble() * random.nextInt() : random.nextDouble();
         } else {
             //Init age data for node
             age[0] = startAge;
