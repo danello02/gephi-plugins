@@ -7,8 +7,6 @@
 package org.daniel.generator.bamodel.ageing;
 
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.plaf.basic.BasicBorders;
 import org.gephi.io.generator.spi.Generator;
 import org.openide.util.lookup.ServiceProvider;
 
