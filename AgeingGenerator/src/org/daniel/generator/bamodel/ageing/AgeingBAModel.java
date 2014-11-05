@@ -162,7 +162,6 @@ public class AgeingBAModel implements Generator {
 
                         j = i;  //break loop
                         m++;    //go to next edge
-                        System.out.println("Node: " + i + ", Edge: " + m);
                     }
                 }
             }
