@@ -31,7 +31,7 @@ public class AgeingBAModel implements Generator {
     private boolean cancel = false;
 
     private ProgressTicket progressTicket;
-    private Random random;
+    private final Random random;
 
     private int N = 200;
     private int m0 = 1;
@@ -116,7 +116,7 @@ public class AgeingBAModel implements Generator {
             //Add M edge out of the new node
             for (int m = 0; m < M && !cancel;) {
                 
-                double norm = 0.0;
+                double norm  = 0.0;
 
                 double sumDegrees = 0.0;
                 for (int j = 0; j < i && !cancel; j++) {
@@ -125,12 +125,16 @@ public class AgeingBAModel implements Generator {
                     }
                     sumDegrees += degrees[j];
                     norm += degrees[j] * age[j][0];
+                    if (Double.isInfinite(norm)) norm = Double.MIN_VALUE;
                 }
+                
                 if (sumDegrees != 0.0) {
                     norm /= sumDegrees;
+                    if (Double.isInfinite(norm)) norm = Double.MIN_VALUE;
                 }
 
                 double r = random.nextDouble() * norm;
+                if (Double.isInfinite(r)) r = Double.MIN_VALUE;
                 double p = 0.0;
 
                 //choose node
@@ -143,6 +147,7 @@ public class AgeingBAModel implements Generator {
                         p = 1.0;
                     } else {
                         p += degrees[j] / sumDegrees * age[j][0];
+                        if (Double.isInfinite(p)) p = Double.MIN_VALUE;
                     }
 
                     if (r <= p) {
@@ -157,6 +162,7 @@ public class AgeingBAModel implements Generator {
 
                         j = i;  //break loop
                         m++;    //go to next edge
+                        System.out.println("Node: " + i + ", Edge: " + m);
                     }
                 }
             }
@@ -191,6 +197,7 @@ public class AgeingBAModel implements Generator {
                         //Exponential function
                         for (int j = 0; j < i && !cancel; j++) {
                             age[j][0] *= age[j][2];
+                            if (Double.isInfinite(age[j][0])) age[j][0] = Double.MIN_VALUE;
                         }
                         break;
 
@@ -198,6 +205,7 @@ public class AgeingBAModel implements Generator {
                         //Homographic transformations
                         for (int j = 0; j < i && !cancel; j++) {
                             age[j][0] = age[j][1]/++age[j][2];
+                            if (Double.isInfinite(age[j][0])) age[j][0] = Double.MIN_VALUE;
                         }
                         break;
 
@@ -216,7 +224,7 @@ public class AgeingBAModel implements Generator {
             //Random age parameters for node
             age[0] = random.nextDouble();
             age[1] = random.nextDouble();
-            age[2] = ageingType == 2 ? random.nextDouble() * random.nextInt() : random.nextDouble();
+            age[2] = ageingType == 2 ? random.nextDouble() * random.nextInt(Integer.MAX_VALUE) : random.nextDouble();
         } else {
             //Init age data for node
             age[0] = startAge;
