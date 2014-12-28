@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: pl.edu.wat.dbocian.et.plugin.core
+OpenIDE-Module-Localizing-Bundle: pl/edu/wat/dbocian/et/plugin/core/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
