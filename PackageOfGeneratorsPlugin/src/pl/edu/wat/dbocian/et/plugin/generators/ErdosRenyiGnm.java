@@ -39,6 +39,9 @@ import pl.edu.wat.dbocian.et.plugin.data.BasicEdge;
  *
  * based on Cezary Bartosiak implementation
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
+ *
+ * More info about algorithm:
+ * http://www.inf.uni-konstanz.de/algo/publications/bb-eglrn-05.pdf
  */
 @ServiceProvider(service = Generator.class)
 public class ErdosRenyiGnm implements Generator {
@@ -51,9 +54,7 @@ public class ErdosRenyiGnm implements Generator {
 
     @Override
     public void generate(ContainerLoader container) {
-        double time = 0.0;
-        long startTime = System.nanoTime();
-        Progress.start(progressTicket, n + n * n + m);
+        Progress.start(progressTicket, n + n * n / 2 + m);
         Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
@@ -61,7 +62,6 @@ public class ErdosRenyiGnm implements Generator {
         // max count of edges
         int max = n * (n - 1) / 2;
 
-        long nodesTime = System.nanoTime();
         // Creating n nodes
         for (int i = 0; i < n && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();
@@ -72,12 +72,8 @@ public class ErdosRenyiGnm implements Generator {
             Progress.progress(progressTicket);
         }
 
-        time = (System.nanoTime() - nodesTime) / (Math.pow(10, 9));
-        System.out.println("Creating n nodes time: " + (System.nanoTime() - nodesTime) + "ns (" + time + "s)");
-
         // m <= max/2
         if (m <= max / 2) {
-            long edgesTime = System.nanoTime();
             // Creating a list of n^2 edges
             List<BasicEdge> edges = new ArrayList<BasicEdge>();
             for (int i = 0; i < n && !cancel; ++i) {
@@ -87,12 +83,9 @@ public class ErdosRenyiGnm implements Generator {
                     Progress.progress(progressTicket);
                 }
             }
-            time = (System.nanoTime() - edgesTime) / (Math.pow(10, 9));
-            System.out.println("Creating a list of n^2 edges time: " + (System.nanoTime() - edgesTime) + "ns (" + time + "s)");
 
-            long drawingTime = System.nanoTime();
             // Drawing m edges
-            for (int i = 0; i < m; ++i/* , ++et */) {
+            for (int i = 0; i < m && !cancel; ++i) {
                 BasicEdge be = edges.get(random.nextInt(edges.size()));
                 EdgeDraft e = container.factory().newEdgeDraft();
                 e.setSource(nodes[be.getSourceId()]);
@@ -101,11 +94,8 @@ public class ErdosRenyiGnm implements Generator {
                 container.addEdge(e);
                 Progress.progress(progressTicket);
             }
-            time = (System.nanoTime() - drawingTime) / (Math.pow(10, 9));
-            System.out.println("Drawing edges time: " + (System.nanoTime() - drawingTime) + "ns (" + time + "s)");
 
         } else { // m > max/2
-            long edgesTime = System.nanoTime();
             //Creating a list of n^2 edges
             List<EdgeDraft> edges = new ArrayList<EdgeDraft>();
             for (int i = 0; i < n && !cancel; ++i) {
@@ -117,33 +107,21 @@ public class ErdosRenyiGnm implements Generator {
                     Progress.progress(progressTicket);
                 }
             }
-            time = (System.nanoTime() - edgesTime) / (Math.pow(10, 9));
-            System.out.println("Creating a list of n^2 edges time: " + (System.nanoTime() - edgesTime) + "ns (" + time + "s)");
 
-
-            long deletingTime = System.nanoTime();
             //Deleting max - m edges
-            for (int i = 0; i < max - m; i++) {
+            for (int i = 0; i < max - m && !cancel; i++) {
                 edges.remove(edges.get(random.nextInt(edges.size())));
             }
-            time = (System.nanoTime() - deletingTime) / (Math.pow(10, 9));
-            System.out.println("Deleting edges time: " + (System.nanoTime() - deletingTime) + "ns (" + time + "s)");
-            
-            long drawingTime = System.nanoTime();
+
             //Drawing m edges
             for (EdgeDraft e : edges) {
                 container.addEdge(e);
                 Progress.progress(progressTicket);
             }
-            time = (System.nanoTime() - drawingTime) / (Math.pow(10, 9));
-            System.out.println("Drawing edges time: " + (System.nanoTime() - drawingTime) + "ns (" + time + "s)");
-
         }
 
         Progress.finish(progressTicket);
         progressTicket = null;
-        time = (System.nanoTime() - startTime) / (Math.pow(10, 9));
-        System.out.println("Full time: " + (System.nanoTime() - startTime) + "ns (" + time + "s)");
     }
 
     public int getN() {

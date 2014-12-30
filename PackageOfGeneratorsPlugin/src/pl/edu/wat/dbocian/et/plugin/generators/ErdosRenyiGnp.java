@@ -36,6 +36,9 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * based on Cezary Bartosiak implementation
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
+ *
+ * More info about algorithm:
+ * http://www.inf.uni-konstanz.de/algo/publications/bb-eglrn-05.pdf
  */
 @ServiceProvider(service = Generator.class)
 public class ErdosRenyiGnp implements Generator {
@@ -48,7 +51,8 @@ public class ErdosRenyiGnp implements Generator {
 
     @Override
     public void generate(ContainerLoader container) {
-        Progress.start(progressTicket, n + n * n);
+        Double progressCalc = n * (n - 1) * p / 2;
+        Progress.start(progressTicket, n + progressCalc.intValue());
         Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
@@ -62,15 +66,15 @@ public class ErdosRenyiGnp implements Generator {
             container.addNode(node);
             Progress.progress(progressTicket);
         }
-        
+
         // Linking every node with each other with probability p (no self-loops)
         int k = -1, v = 1;
-        while (v < n) {
+        while (v < n && !cancel) {
             double r = random.nextDouble();
             Double d = Math.log10(1 - r) / Math.log10(1 - p);
             //calc next edge
             k = k + 1 + d.intValue();
-            while (k >= v && v < n) {
+            while (k >= v && v < n && !cancel) {
                 k -= v++;
             }
             if (v < n) {
@@ -81,7 +85,7 @@ public class ErdosRenyiGnp implements Generator {
                 Progress.progress(progressTicket);
             }
         }
-        
+
         Progress.finish(progressTicket);
         progressTicket = null;
     }
@@ -101,7 +105,7 @@ public class ErdosRenyiGnp implements Generator {
     public void setP(double p) {
         this.p = p;
     }
-    
+
     @Override
     public String getName() {
         return "Erdos-Renyi G(n, p) model";

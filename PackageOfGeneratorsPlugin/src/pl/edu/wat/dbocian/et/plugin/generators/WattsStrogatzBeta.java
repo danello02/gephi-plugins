@@ -36,6 +36,9 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * based on Cezary Bartosiak implementation
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
+ *
+ * More info about algorithm:
+ * http://en.wikipedia.org/wiki/Watts_and_Strogatz_model
  */
 @ServiceProvider(service = Generator.class)
 public class WattsStrogatzBeta implements Generator {
@@ -43,16 +46,14 @@ public class WattsStrogatzBeta implements Generator {
     private boolean cancel = false;
     private ProgressTicket progressTicket;
 
-    private int N = 2000;
-    private int K = 500;
+    private int N = 20;
+    private int K = 4;
     private double beta = 0.2;
-    private int cp = 0;
 
     @Override
     public void generate(ContainerLoader container) {
         Double progressCalc = N * K * beta;
         Progress.start(progressTicket, N + N * K / 2 + progressCalc.intValue() / 2);
-        System.out.println("Start: " + (N + N * K / 2 + progressCalc.intValue() / 2));
         Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
@@ -66,7 +67,6 @@ public class WattsStrogatzBeta implements Generator {
             nodes[i] = node;
             container.addNode(node);
             Progress.progress(progressTicket);
-            cp++;
         }
         for (int i = 0; i < N && !cancel; ++i) {
             for (int j = 1; j <= K / 2 && !cancel; ++j) {
@@ -75,15 +75,13 @@ public class WattsStrogatzBeta implements Generator {
                 edge.setTarget(nodes[(i + j) % N]);
                 container.addEdge(edge);
                 Progress.progress(progressTicket);
-                cp++;
             }
         }
-        System.out.println("Progress: " + cp);
 
         // Rewiring edges
         int s = -1;
-        int i = 0, j = 1;
-        while (i < N) {
+        int i = 0, j;
+        while (i < N && !cancel) {
             double r = random.nextDouble();
             Double d = Math.log10(1 - r) / Math.log10(1 - beta);
             //calc next edge to rewire
@@ -103,11 +101,9 @@ public class WattsStrogatzBeta implements Generator {
                 edge.setSource(nodes[i]);
                 edge.setTarget(nodes[k]);
                 container.addEdge(edge);
-                cp++;
                 Progress.progress(progressTicket);
             }
         }
-        System.out.println("Progres count: " + cp);
         Progress.finish(progressTicket);
         progressTicket = null;
     }
