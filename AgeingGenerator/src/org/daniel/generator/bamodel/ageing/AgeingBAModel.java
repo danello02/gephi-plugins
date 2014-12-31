@@ -19,7 +19,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Implementation of this generator base on generalized BA Model. Algorithm was
+ * Implementation of this generator base on BA Model. Algorithm was
  * modified with ageing and growing functions which develop original
  * preferential attachment of nodes.
  *
