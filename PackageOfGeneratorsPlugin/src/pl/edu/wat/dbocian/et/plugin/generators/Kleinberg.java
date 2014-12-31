@@ -36,8 +36,11 @@ import org.openide.util.lookup.ServiceProvider;
  * based on Cezary Bartosiak implementation:
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  *
- * More info about algorithm: http://en.wikipedia.org/wiki/Small-world_routing
+ * More info about algorithm: 
+ * http://en.wikipedia.org/wiki/Small-world_routing
  * http://web.cs.ucdavis.edu/~martel/main/podc.talk.ppt
+ * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.117.7097&rep=rep1&type=pdf
+ * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.83.381&rep=rep1&type=pdf
  */
 @ServiceProvider(service = Generator.class)
 public class Kleinberg implements Generator {
