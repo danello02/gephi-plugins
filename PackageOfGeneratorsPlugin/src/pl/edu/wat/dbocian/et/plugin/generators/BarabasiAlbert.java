@@ -174,6 +174,9 @@ public class BarabasiAlbert implements Generator {
                         if (Double.isInfinite(p)) {
                             p = Double.MIN_VALUE;
                         }
+                        if (j == i - 1) {   //protection for numerical error 
+                            p = norm;
+                        }
                     }
 
                     if (r <= p) {
