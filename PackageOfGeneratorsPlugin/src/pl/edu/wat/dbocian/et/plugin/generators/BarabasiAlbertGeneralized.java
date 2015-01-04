@@ -55,6 +55,10 @@ public class BarabasiAlbertGeneralized implements Generator {
     private double p = 0.25;
     private double q = 0.25;
 
+    private boolean passingNodes = true;
+    private double mi = 40;
+    private double sigma2 = 1;
+
     @Override
     public void generate(ContainerLoader container) {
         Progress.start(progressTicket, N);
@@ -64,8 +68,16 @@ public class BarabasiAlbertGeneralized implements Generator {
         // Timestamps
         int t = 1;
 
-        NodeDraft[] nodes = new NodeDraft[N + 1];
-        int[] degrees = new int[N + 1];
+        // Array of all ever existing nodes
+        NodeDraft[] nodes = new NodeDraft[N + m0];
+        
+        //List of currently existing nodes
+        List<Integer> nodeList = new ArrayList<Integer>();
+        
+        int[] degrees = new int[N + m0];
+        
+        // Array of nodes age - i.e. iteration left to die
+        int[] nodeAges = new int[N + m0];
 
         // Array of edges with values meaning:
         // -1 - edge not exist
@@ -78,35 +90,43 @@ public class BarabasiAlbertGeneralized implements Generator {
         }
 
         // list of id nodes which degree < n-1
-        List<Integer> notFullNodes = new ArrayList<Integer>();
+        List<Integer> notFullNodes = new ArrayList<>();
 
         // Creating m0 isolated nodes
         for (int i = 0; i < m0 && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();
             node.setLabel("Node " + i);
-            node.addTimeInterval("0", N + "");
             nodes[i] = node;
+            nodeList.add(i);
             degrees[i] = 0;
+            nodeAges[i] = randNodeAge(random);
+            System.out.println("Node: " + i + ", age: " + nodeAges[i]);
             notFullNodes.add(i);
+            
+            if (passingNodes) node.addTimeInterval("0", nodeAges[i] + "");
+            else node.addTimeInterval("0", N + "");
+            
             container.addNode(node);
         }
 
         // Performing N steps of the algorithm
-        int n = m0; // the number of existing nodes
+        int n = m0; // the number of currently existing nodes
+        int allN = m0; //the nummer of ever existing nodes
         int ec = 0;  // the number of existing edges
         for (int i = 0; i < N && !cancel; ++i, ++t) {
             double r = random.nextDouble();
+            n = nodeList.size();
 
             if (r <= p) { // adding M edges
                 for (int m = 0; m < M && !cancel; ++m) {
                     if (ec == n * (n - 1) / 2) {
-                        m = M;
+                        m = M; //end of loop
                     } else {
                         // Randomly choosen source node
                         int a = notFullNodes.get(random.nextInt(notFullNodes.size()));
 
                         // Get list of nodes available for 'a' and count sum of theirs degree                                        
-                        List<Integer> availableNodes = new ArrayList<Integer>();
+                        List<Integer> availableNodes = new ArrayList<>();
                         double sum = 0.0;
                         for (int av = 0; av < notFullNodes.size() && !cancel; av++) {
                             int id = notFullNodes.get(av);
@@ -121,10 +141,11 @@ public class BarabasiAlbertGeneralized implements Generator {
                         double pki = 0.0;
 
                         // Chose target node with specified probability
-                        for (int j = 0; j < availableNodes.size() && !cancel; ++j) {
+                        int avSize = availableNodes.size();
+                        for (int j = 0; j < avSize && !cancel; ++j) {
                             int id = availableNodes.get(j);
                             pki += (degrees[id] + 1) / sum;
-                            if (j == n - 1) {   //protection for numerical error 
+                            if (j == avSize - 1) {   //protection for numerical error 
                                 pki = 1.0;
                             }
 
@@ -141,7 +162,7 @@ public class BarabasiAlbertGeneralized implements Generator {
                                 increaseDegree(degrees, notFullNodes, n, id);
                                 ec++;
 
-                                j = availableNodes.size();
+                                j = availableNodes.size(); //end of loop
                             }
                         }
                     }
@@ -151,7 +172,7 @@ public class BarabasiAlbertGeneralized implements Generator {
                     continue;
                 }
                 // Get list of nodes with degree: maxDegree > degree > 0
-                List<Integer> notEmptyAndFullNodes = new ArrayList<Integer>();
+                List<Integer> notEmptyAndFullNodes = new ArrayList<>();
                 for (int nfn = 0; nfn < notFullNodes.size() && !cancel; nfn++) {
                     int id = notFullNodes.get(nfn);
                     if (degrees[id] > 0) {
@@ -166,13 +187,13 @@ public class BarabasiAlbertGeneralized implements Generator {
                     // Get list of nodes connected to 'a' 
                     // AND
                     // Get list of nodes available for 'a' and count sum of theirs degree
-                    List<Integer> connectedNodes = new ArrayList<Integer>();
-                    List<Integer> availableNodes = new ArrayList<Integer>();
+                    List<Integer> connectedNodes = new ArrayList<>();
+                    List<Integer> availableNodes = new ArrayList<>();
                     double sum = 0.0;
-                    for (int c = 0; c < n && !cancel; c++) {
+                    for (int c = 0; c < allN && !cancel; c++) {
                         if (edgeExists(edges, a, c)) {
                             connectedNodes.add(c);
-                        } else if (a != c) {
+                        } else if (a != c && nodeList.contains(c)) {
                             availableNodes.add(c);
                             sum += degrees[c];
                         }
@@ -186,10 +207,11 @@ public class BarabasiAlbertGeneralized implements Generator {
                     // Choose target node with specified probability to rewire edge
                     double b = random.nextDouble();
                     double pki = 0.0;
-                    for (int j = 0; j < availableNodes.size() && !cancel; ++j) {
+                    int avSize = availableNodes.size();
+                    for (int j = 0; j < avSize && !cancel; ++j) {
                         int id = availableNodes.get(j);
                         pki += (degrees[id] + 1) / sum;
-                        if (j == n - 1) {   //protection for numerical error 
+                        if (j == avSize - 1) {   //protection for numerical error 
                             pki = 1.0;
                         }
 
@@ -220,56 +242,88 @@ public class BarabasiAlbertGeneralized implements Generator {
                                 notEmptyAndFullNodes.add(id);
                             }
 
-                            j = availableNodes.size();
+                            j = availableNodes.size(); //end of loop
                         }
                     }
                 }
             } else { // adding a new node with M edges
                 NodeDraft node = container.factory().newNodeDraft();
-                node.setLabel("Node " + n);
-                node.addTimeInterval(t + "", N + "");
-                nodes[n] = node;
-                degrees[n] = 0;
-                notFullNodes.add(n);
+                node.setLabel("Node " + allN);
+                nodes[allN] = node;               
+                degrees[allN] = 0;
+                nodeAges[allN] = randNodeAge(random);
+                System.out.println("Node: " + allN + ", age: " + nodeAges[allN]);
+                notFullNodes.add(allN);
+                
+                if (passingNodes) node.addTimeInterval(t + "", (t + nodeAges[i]) + "");
+                else node.addTimeInterval(t + "", N + "");
+                
                 container.addNode(node);
 
                 // Adding M edges out of the new node
                 double sum = 0.0;
-                for (int j = 0; j < n && !cancel; ++j) {
-                    sum += degrees[j];
+                for (int j = 0; j < nodeList.size() && !cancel; ++j) {
+                    sum += degrees[nodeList.get(j)];
                 }
-                sum += n;
-                for (int m = 0; m < M && !cancel; ++m) {
+                sum += nodeList.size();
+                for (int m = 0; m < M && m < nodeList.size() && !cancel; ++m) {
                     r = random.nextDouble();
                     double pki = 0.0;
-
-                    for (int j = 0; j < n && !cancel; ++j) {
-                        if (edgeExists(edges, j, n)) {
+                    
+                    for (int j = 0; j < nodeList.size() && !cancel; ++j) {
+                        int id = nodeList.get(j);
+                        if (edgeExists(edges, id, allN)) {
                             continue;
                         }
-                        pki += (degrees[j] + 1) / sum;
-                        if (j == n - 1) {   //protection for numerical error 
+                        pki += (degrees[id] + 1) / sum;
+                        if (j == nodeList.size() - 1) {   //protection for numerical error 
                             pki = 1.0;
                         }
 
                         if (r <= pki) {
                             EdgeDraft edge = container.factory().newEdgeDraft();
-                            edge.setSource(nodes[n]);
-                            edge.setTarget(nodes[j]);
-                            edges[n][j] = edges[j][n] = t;
-                            sum -= degrees[j] + 1;
-                            increaseDegree(degrees, notFullNodes, n + 1, n);
-                            increaseDegree(degrees, notFullNodes, n + 1, j);
+                            edge.setSource(nodes[allN]);
+                            edge.setTarget(nodes[id]);
+                            edges[allN][id] = edges[id][allN] = t;
+                            sum -= (degrees[id] + 1);
+                            increaseDegree(degrees, notFullNodes, n + 1, allN);
+                            increaseDegree(degrees, notFullNodes, n + 1, id);
 
                             container.addEdge(edge);
                             ec++;
 
-                            j = n;
+                            j = nodeList.size();
                         }
                     }
                 }
 
+                nodeList.add(allN);
                 n++;
+                allN++;
+            }
+            
+            // Node passing
+            if (passingNodes) {
+                for (int j = 0; j < nodeList.size() && !cancel;) {
+                    int id = nodeList.get(j);
+                    if (--nodeAges[id] == 0) { // Node will die
+                        System.out.println("Node: " + id + "will die in iteration: " + i);
+                        n--;
+                        nodeList.remove(j);
+                        notFullNodes.remove((Integer) id);
+                        for (int k = 0; k < nodeList.size() && !cancel; k++) {
+                            int idk = nodeList.get(k);
+                            if (edgeExists(edges, id, idk)) {
+                                getEdge(container, nodes[id], nodes[idk]).addTimeInterval(edges[id][idk] + "", t + "");
+                                edges[id][idk] = edges[idk][id] = -1;
+                                ec--;
+                                decreaseDegree(degrees, notFullNodes, idk);
+                            }
+                        }
+                    } else {
+                        j++;
+                    }
+                }
             }
 
             Progress.progress(progressTicket);
@@ -303,8 +357,8 @@ public class BarabasiAlbertGeneralized implements Generator {
         return edge;
     }
 
-    private void increaseDegree(int[] degrees, List<Integer> notFullNodes, int numberOfNodes, int id) {
-        if (++degrees[id] == numberOfNodes - 1) {
+    private void increaseDegree(int[] degrees, List<Integer> notFullNodes, int numberOfExistingNodes, int id) {
+        if (++degrees[id] == numberOfExistingNodes - 1) {
             notFullNodes.remove((Integer) id);
         }
     }
@@ -314,6 +368,16 @@ public class BarabasiAlbertGeneralized implements Generator {
         if (!notFullNodes.contains((Integer) id)) {
             notFullNodes.add(id);
         }
+    }
+
+    /**
+     * Method return random 
+     * @return age
+     */
+    private int randNodeAge(Random rand) {
+        Double r = mi + sigma2 * rand.nextGaussian();
+        int age = r.intValue();
+        return age < 1 ? 1 : age;
     }
 
     public int getN() {
