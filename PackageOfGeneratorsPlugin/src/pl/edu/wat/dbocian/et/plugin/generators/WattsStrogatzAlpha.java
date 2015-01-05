@@ -32,10 +32,19 @@ import org.gephi.io.importer.api.NodeDraft;
 import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
 import org.openide.util.lookup.ServiceProvider;
+import pl.edu.wat.dbocian.et.plugin.data.BasicEdge;
 
 /**
  * @author Daniel Bocian
  *
+ * n > k > 0
+ * 0 <= alpha
+ * 
+ * 0 <= p <= 1
+ * m >= 0
+ * m <= n * (n - 1) / 2
+ * m <= n * k / 2
+ * 
  * based on Cezary Bartosiak implementation:
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  * 
@@ -51,7 +60,15 @@ public class WattsStrogatzAlpha implements Generator {
     private int n = 20;
     private int k = 4;
     private double alpha = 3.5;
-    private double p = Math.pow(10, -10);
+    private double pr = Math.pow(10, -10);
+    
+    // initial topology:
+    // 0 - regular ring (default)
+    // 1 - G(n, p)
+    // 2 - G(n, m)
+    private int topology = 2;
+    private double p = 0.05;
+    private int m = 20;
 
     @Override
     public void generate(ContainerLoader container) {
@@ -60,27 +77,32 @@ public class WattsStrogatzAlpha implements Generator {
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
         NodeDraft[] nodes = new NodeDraft[n];
-
-        // Creating a regular ring lattice
         int ec = 0;
-        for (int i = 0; i < n && !cancel; ++i) {
-            NodeDraft node = container.factory().newNodeDraft();
-            node.setLabel("Node " + i);
-            nodes[i] = node;
-            container.addNode(node);
-            Progress.progress(progressTicket);
+
+        // Create nodes with specified topology
+        switch (topology) {
+            case 1: 
+                Double progressCalc = n * (n - 1) * p / 2;
+                Progress.start(progressTicket, n + progressCalc.intValue() + n * k / 2);
+                ec = generateGnp(container, nodes);
+                System.out.println("Nodes size: " + nodes.length);
+            break;
+               
+            case 2: 
+                Progress.start(progressTicket, n + n * n / 2 + m + n * k / 2);
+                ec = generateGnm(container, nodes);
+                System.out.println("Nodes size: " + nodes.length);
+            break;
+                
+            default:
+                Progress.start(progressTicket, n + n + n * k / 2);
+                ec = generateRing(container, nodes);
+                System.out.println("Nodes size: " + nodes.length);
         }
-        for (int i = 0; i < n && !cancel; ++i) {
-            EdgeDraft edge = container.factory().newEdgeDraft();
-            edge.setSource(nodes[i]);
-            edge.setTarget(nodes[(i + 1) % n]);
-            container.addEdge(edge);
-            ec++;
-            Progress.progress(progressTicket);
-        }
+        
 
         // Creating n * k / 2 edges
-        List<Integer> ids = new ArrayList<Integer>();
+        List<Integer> ids = new ArrayList<>();
         while (ec < n * k / 2 && !cancel) {
             for (int i = 0; i < n && !cancel; ++i) {
                 ids.add(i);
@@ -127,9 +149,9 @@ public class WattsStrogatzAlpha implements Generator {
             return 1.0;
         }
         if (mij == 0) {
-            return p;
+            return pr;
         }
-        return Math.pow(mij / k, alpha) * (1 - p) + p;
+        return Math.pow(mij / k, alpha) * (1 - pr) + pr;
     }
 
     public int calculatemij(ContainerLoader container, NodeDraft[] nodes, int i, int j) {
@@ -146,6 +168,128 @@ public class WattsStrogatzAlpha implements Generator {
 
     private boolean edgeExists(ContainerLoader container, NodeDraft node1, NodeDraft node2) {
         return container.edgeExists(node1, node2) || container.edgeExists(node2, node1);
+    }
+    
+    private int generateRing(ContainerLoader container, NodeDraft[] nodes) {
+        int ec = 0;
+        // Creating a regular ring lattice
+                for (int i = 0; i < n && !cancel; ++i) {
+                    NodeDraft node = container.factory().newNodeDraft();
+                    node.setLabel("Node " + i);
+                    nodes[i] = node;
+                    container.addNode(node);
+                    Progress.progress(progressTicket);
+                }
+                for (int i = 0; i < n && !cancel; ++i) {
+                    EdgeDraft edge = container.factory().newEdgeDraft();
+                    edge.setSource(nodes[i]);
+                    edge.setTarget(nodes[(i + 1) % n]);
+                    container.addEdge(edge);
+                    ec++;
+                    Progress.progress(progressTicket);
+                }
+                return ec;
+    }
+    
+    private int generateGnp(ContainerLoader container, NodeDraft[] nodes) {
+        int ec = 0;
+        Random random = new Random();
+        // Creating n nodes
+                for (int i = 0; i < n && !cancel; ++i) {
+                    NodeDraft node = container.factory().newNodeDraft();
+                    node.setLabel("Node " + i);
+                    nodes[i] = node;
+                    container.addNode(node);
+                    Progress.progress(progressTicket);
+                }
+
+                // Linking every node with each other with probability p (no self-loops)
+                int s = -1, v = 1;
+                while (v < n && !cancel) {
+                    double r = random.nextDouble();
+                    Double d = Math.log10(1 - r) / Math.log10(1 - p);
+                    //calc next edge
+                    s = s + 1 + d.intValue();
+                    while (s >= v && v < n && !cancel) {
+                        s -= v++;
+                    }
+                    if (v < n) {
+                        ec++;
+                        EdgeDraft edge = container.factory().newEdgeDraft();
+                        edge.setSource(nodes[v]);
+                        edge.setTarget(nodes[s]);
+                        container.addEdge(edge);
+                        Progress.progress(progressTicket);
+                    }
+                }
+                return ec;
+    }
+    
+    private int generateGnm(ContainerLoader container, NodeDraft[] nodes) {
+        int ec = 0;
+        Random random = new Random();
+        // max count of edges
+        int max = n * (n - 1) / 2;
+
+        // Creating n nodes
+        for (int i = 0; i < n && !cancel; ++i) {
+            NodeDraft node = container.factory().newNodeDraft();
+            node.setLabel("Node " + i);
+            // node.addTimeInterval(vt + "", m + "");
+            nodes[i] = node;
+            container.addNode(node);
+            Progress.progress(progressTicket);
+        }
+
+        if (m <= max / 2) {
+            // Creating a list of n^2 edges
+            List<BasicEdge> edges = new ArrayList<>();
+            for (int i = 0; i < n && !cancel; ++i) {
+                for (int j = i + 1; j < n && !cancel; ++j) {
+                    BasicEdge edge = new BasicEdge(i, j);
+                    edges.add(edge);
+                    Progress.progress(progressTicket);
+                }
+            }
+
+            // Drawing m edges
+            for (int i = 0; i < m && !cancel; ++i) {
+                BasicEdge be = edges.get(random.nextInt(edges.size()));
+                EdgeDraft e = container.factory().newEdgeDraft();
+                e.setSource(nodes[be.getSourceId()]);
+                e.setTarget(nodes[be.getTargetId()]);
+                edges.remove(be);
+                ec++;
+                container.addEdge(e);
+                Progress.progress(progressTicket);
+            }
+
+        } else {
+            //Creating a list of n^2 edges
+            List<EdgeDraft> edges = new ArrayList<>();
+            for (int i = 0; i < n && !cancel; ++i) {
+                for (int j = i + 1; j < n && !cancel; ++j) {
+                    EdgeDraft edge = container.factory().newEdgeDraft();
+                    edge.setSource(nodes[i]);
+                    edge.setTarget(nodes[j]);
+                    edges.add(edge);
+                    Progress.progress(progressTicket);
+                }
+            }
+
+            //Deleting max - m edges
+            for (int i = 0; i < max - m && !cancel; i++) {
+                edges.remove(edges.get(random.nextInt(edges.size())));
+            }
+
+            //Drawing m edges
+            ec = edges.size();
+            for (EdgeDraft e : edges) {
+                container.addEdge(e);
+                Progress.progress(progressTicket);
+            }
+        }
+        return ec;
     }
 
     public int getN() {
@@ -173,13 +317,37 @@ public class WattsStrogatzAlpha implements Generator {
     }
 
     public double getP() {
-        return p;
+        return pr;
     }
 
     public void setP(double p) {
-        this.p = p;
+        this.pr = p;
     }
 
+    public double getPr() {
+        return pr;
+    }
+
+    public void setPr(double pr) {
+        this.pr = pr;
+    }
+
+    public int getTopology() {
+        return topology;
+    }
+
+    public void setTopology(int topology) {
+        this.topology = topology;
+    }
+
+    public int getM() {
+        return m;
+    }
+
+    public void setM(int m) {
+        this.m = m;
+    }
+    
     @Override
     public String getName() {
         return "Watts-Strogatz Small World model Alpha";
