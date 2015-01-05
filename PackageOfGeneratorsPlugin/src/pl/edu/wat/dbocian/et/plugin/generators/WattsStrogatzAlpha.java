@@ -85,19 +85,16 @@ public class WattsStrogatzAlpha implements Generator {
                 Double progressCalc = n * (n - 1) * p / 2;
                 Progress.start(progressTicket, n + progressCalc.intValue() + n * k / 2);
                 ec = generateGnp(container, nodes);
-                System.out.println("Nodes size: " + nodes.length);
             break;
                
             case 2: 
                 Progress.start(progressTicket, n + n * n / 2 + m + n * k / 2);
                 ec = generateGnm(container, nodes);
-                System.out.println("Nodes size: " + nodes.length);
             break;
                 
             default:
                 Progress.start(progressTicket, n + n + n * k / 2);
                 ec = generateRing(container, nodes);
-                System.out.println("Nodes size: " + nodes.length);
         }
         
 
