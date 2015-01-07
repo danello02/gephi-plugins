@@ -20,6 +20,8 @@
  */
 package pl.edu.wat.dbocian.et.plugin.generators;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import org.gephi.io.generator.spi.Generator;
 import org.gephi.io.generator.spi.GeneratorUI;
@@ -36,6 +38,10 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * based on Cezary Bartosiak implementation
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
+ *
+ * More info about algorithm:
+ * http://en.wikipedia.org/wiki/Watts_and_Strogatz_model
+ * http://www.inf.uni-konstanz.de/algo/publications/bb-eglrn-05.pdf
  */
 @ServiceProvider(service = Generator.class)
 public class WattsStrogatzBeta implements Generator {
@@ -43,13 +49,125 @@ public class WattsStrogatzBeta implements Generator {
     private boolean cancel = false;
     private ProgressTicket progressTicket;
 
-    private int N = 2000;
-    private int K = 500;
-    private double beta = 0.2;
-    private int cp = 0;
+    private int N = 500;
+    private int K = 100;
+    private double beta = 0.5;
+
+    // Will probabilty depend on degree
+    private boolean dependentProbability = false;
+    private double r = -50;
 
     @Override
     public void generate(ContainerLoader container) {
+        if (dependentProbability) {
+            generateModifiedWSBeta(container);
+        } else {
+            generateClassicWSBeta(container);
+        }
+
+    }
+
+    /**
+     * Method generate graph using modified Watts-Strogratz Beta algorithm.
+     * Modification add preferential attachment of rewired edges.
+     * Probability of attachment to node is equal:
+     *          (ki^r) / (SUMj(kj^r))
+     * where:
+     *  - ki - degree of node i,
+     *  - r - real parameter.
+     * 
+     * Thanks to the fact:
+     *  - for r > 0 nodes with higher degree are more attractive.
+     *  - for r < 0 nodes with lower degree are more attractive.
+     * 
+     * @param loader 
+     */
+    private void generateModifiedWSBeta(ContainerLoader container) {
+        Progress.start(progressTicket, N + N * K / 2 + N * K);
+        Random random = new Random();
+        container.setEdgeDefault(EdgeDefault.UNDIRECTED);
+
+        NodeDraft[] nodes = new NodeDraft[N];
+        int[] degrees = new int[N];
+
+        // Creating a regular ring lattice
+        Progress.setDisplayName(progressTicket, "Generating N nodes...");
+        for (int i = 0; i < N && !cancel; ++i) {
+            NodeDraft node = container.factory().newNodeDraft();
+            node.setLabel("Node " + i);
+            node.addTimeInterval(i + "", N + "");
+            nodes[i] = node;
+            container.addNode(node);
+            Progress.progress(progressTicket);
+        }
+        Progress.setDisplayName(progressTicket, "Generating N*K/2 edges...");
+        for (int i = 0; i < N && !cancel; ++i) {
+            degrees[i] = K;
+            for (int j = 1; j <= K / 2 && !cancel; ++j) {
+                EdgeDraft edge = container.factory().newEdgeDraft();
+                edge.setSource(nodes[i]);
+                edge.setTarget(nodes[(i + j) % N]);
+                container.addEdge(edge);
+                Progress.progress(progressTicket);
+            }
+        }
+
+        // Rewiring edges
+        Progress.setDisplayName(progressTicket, "Rewiring edges...");
+        for (int i = 0; i < N && !cancel; ++i) {
+            // Get list of nodes not connected to i
+            double sum = 0.0;
+            List<Integer> allowed = new ArrayList<>();
+            for (int n = 0; n < N && !cancel; n++) {
+                if (n != i && !edgeExists(container, nodes[i], nodes[n])) {
+                    sum += Math.pow(degrees[n], r);
+                    allowed.add(n);
+                }
+            }
+            
+            for (int j = 1; j <= K / 2 && !cancel; ++j) {                
+                if (random.nextDouble() <= beta) {
+                    double rand = random.nextDouble() * sum;
+                    double p = 0.0;
+                    for (int n = 0; n < allowed.size() && !cancel; n++) {
+                        p += Math.pow(degrees[allowed.get(n)], r);
+                        
+                        // If find node or this is last node (protection for numerical error)
+                        if (rand <= p || n == allowed.size() - 1) {
+                            int nodeId = allowed.get(n);
+                            EdgeDraft edge = container.factory().newEdgeDraft();
+                            edge.setSource(nodes[i]);
+                            edge.setTarget(nodes[nodeId]);
+                            sum -= Math.pow(degrees[nodeId], r);
+                            degrees[nodeId]++;
+                            allowed.remove(n);
+                            
+                            container.addEdge(edge);
+                            
+                            // End of loop
+                            n = allowed.size();
+                        }
+                    }
+                    
+                    int nodeId = (i + j) % N;
+                    container.removeEdge(getEdge(container, nodes[i], nodes[nodeId]));
+                    degrees[nodeId]--;
+                    allowed.add(nodeId);
+                    
+                    Progress.progress(progressTicket);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Method generate graph using classic Watts-Strogratz Beta algorithm with
+     * skipping over potenial edges that are not created. Probability of
+     * generating the next edge after k trials is: 
+     *          p*(1-p)^(k-1)
+     * @param containerLoader
+     */
+    private void generateClassicWSBeta(ContainerLoader container) {
         Double progressCalc = N * K * beta;
         Progress.start(progressTicket, N + N * K / 2 + progressCalc.intValue() / 2);
         System.out.println("Start: " + (N + N * K / 2 + progressCalc.intValue() / 2));
@@ -59,6 +177,7 @@ public class WattsStrogatzBeta implements Generator {
         NodeDraft[] nodes = new NodeDraft[N];
 
         // Creating a regular ring lattice
+        Progress.setDisplayName(progressTicket, "Generating N nodes...");
         for (int i = 0; i < N && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();
             node.setLabel("Node " + i);
@@ -66,8 +185,8 @@ public class WattsStrogatzBeta implements Generator {
             nodes[i] = node;
             container.addNode(node);
             Progress.progress(progressTicket);
-            cp++;
         }
+        Progress.setDisplayName(progressTicket, "Generating N*K/2 edges...");
         for (int i = 0; i < N && !cancel; ++i) {
             for (int j = 1; j <= K / 2 && !cancel; ++j) {
                 EdgeDraft edge = container.factory().newEdgeDraft();
@@ -75,12 +194,11 @@ public class WattsStrogatzBeta implements Generator {
                 edge.setTarget(nodes[(i + j) % N]);
                 container.addEdge(edge);
                 Progress.progress(progressTicket);
-                cp++;
             }
         }
-        System.out.println("Progress: " + cp);
 
         // Rewiring edges
+        Progress.setDisplayName(progressTicket, "Rewiring edges...");
         int s = -1;
         int i = 0, j = 1;
         while (i < N) {
@@ -91,23 +209,21 @@ public class WattsStrogatzBeta implements Generator {
             i = s / (K / 2);
             j = 1 + s % (K / 2);
 
-            if (i < N) {
-                container.removeEdge(getEdge(container, nodes[i], nodes[(i + j) % N]));
-
+            if (i < N) {                
                 int k = random.nextInt(N);
                 while ((k == i || edgeExists(container, nodes[i], nodes[k])) && !cancel) {
                     k = random.nextInt(N);
                 }
+                
+                container.removeEdge(getEdge(container, nodes[i], nodes[(i + j) % N]));
 
                 EdgeDraft edge = container.factory().newEdgeDraft();
                 edge.setSource(nodes[i]);
                 edge.setTarget(nodes[k]);
                 container.addEdge(edge);
-                cp++;
                 Progress.progress(progressTicket);
             }
         }
-        System.out.println("Progres count: " + cp);
         Progress.finish(progressTicket);
         progressTicket = null;
     }
