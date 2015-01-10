@@ -60,7 +60,7 @@ public class WattsStrogatzAlpha implements Generator {
     private int n = 20;
     private int k = 4;
     private double alpha = 3.5;
-    private double pr = Math.pow(10, -10);
+    private final double pr = Math.pow(10, -10);
     
     // initial topology:
     // 0 - regular ring (default)
@@ -314,19 +314,11 @@ public class WattsStrogatzAlpha implements Generator {
     }
 
     public double getP() {
-        return pr;
+        return p;
     }
 
     public void setP(double p) {
-        this.pr = p;
-    }
-
-    public double getPr() {
-        return pr;
-    }
-
-    public void setPr(double pr) {
-        this.pr = pr;
+        this.p = p;
     }
 
     public int getTopology() {
@@ -344,7 +336,7 @@ public class WattsStrogatzAlpha implements Generator {
     public void setM(int m) {
         this.m = m;
     }
-    
+        
     @Override
     public String getName() {
         return "Watts-Strogatz Small World model Alpha";
