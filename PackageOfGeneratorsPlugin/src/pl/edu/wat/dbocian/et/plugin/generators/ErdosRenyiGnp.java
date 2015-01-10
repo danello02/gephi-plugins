@@ -34,6 +34,9 @@ import org.openide.util.lookup.ServiceProvider;
 /**
  * @author Daniel Bocian
  *
+ * n > 0
+ * 0 <= p <= 1
+ * 
  * based on Cezary Bartosiak implementation
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  *
@@ -46,19 +49,108 @@ public class ErdosRenyiGnp implements Generator {
     private boolean cancel = false;
     private ProgressTicket progressTicket;
 
-    private int n = 50;
-    private double p = 0.05;
-
+    private int n = 10;
+    private double p = 0.01;
+    
+    private boolean gridAlgorithm = false;
+    
+    private static final int SPACE_SIZE = 100;
+  
     @Override
     public void generate(ContainerLoader container) {
-        Double progressCalc = n * (n - 1) * p / 2;
-        Progress.start(progressTicket, n + progressCalc.intValue());
+        if (gridAlgorithm) {
+            generateGridAlgorithmGnp(container);
+        } else {
+            generateClassicERGnp(container);
+        }                     
+    }    
+        
+    /**
+     * Method generate graph using modified Erdos-Renyi G(n, p) algorithm.
+     * 
+     * Modified algorithm:
+     * 1. Create n x n nodes (like in grid)
+     * 2. Start from smalest square in center of grid (if n is even square will
+     * be 2x2 nodes size, otherwise 1x1).
+     * 3. Do 4 and 5 while square ft in grid.
+     * 4. Connect evry nodes in square with probability p.
+     * 5. Get next, biggest square from the center (size + 2) and go to 4.
+     * 
+     * Nodes are arranged in grid. Also time interval was added to
+     * allow timeline control.
+     * 
+     * @param container 
+     */
+    private void generateGridAlgorithmGnp(ContainerLoader container) {
+        Progress.start(progressTicket, n * n + countProgress(n));
+        Random random = new Random();
+        container.setEdgeDefault(EdgeDefault.UNDIRECTED);
+        
+        NodeDraft[][] nodes = new NodeDraft[n][n];
+        
+        Double d = (double) n / 2;
+        int delta = - d.intValue() * SPACE_SIZE;
+        int maxT = n / 2 + 1;
+        
+            
+        Progress.setDisplayName(progressTicket, "Creating n nodes...");
+        for (int i = 0; i < n && !cancel; i++) {
+            for (int j = 0; j < n && !cancel; j++) {
+                NodeDraft node = container.factory().newNodeDraft();
+                node.setLabel("Node " + i + " " + j);
+                node.setX(delta + i * SPACE_SIZE);
+                node.setY(delta + j * SPACE_SIZE);
+                nodes[i][j] = node;
+                node.addTimeInterval("0", maxT + "");
+                container.addNode(node);
+                Progress.progress(progressTicket);
+            }
+        }
+        
+        int t = 0;   
+        for (int s = 0; s <= n / 2 && !cancel; s++) {
+            t++;
+            int min = n / 2 - s;
+            int max = (n + 1) / 2 + s;
+            for (int i = min; i < max && !cancel; i++) {
+                for (int j = min; j < max && !cancel; j++) {
+                    for (int k = i; k < max && ! cancel; k++) {
+                        for (int l = k == i? j + 1 : min; l < max && !cancel; l++) {
+                            if (random.nextDouble() < p && !edgeExists(container, nodes[i][j], nodes[k][l])) {
+                                EdgeDraft edge = container.factory().newEdgeDraft();
+                                edge.setSource(nodes[i][j]);
+                                edge.setTarget(nodes[k][l]);
+                                edge.addTimeInterval(t + "", maxT + "");
+                                container.addEdge(edge);
+                            }
+                            Progress.progress(progressTicket);
+                        }
+                    }                    
+                }
+            }
+        }     
+        
+        Progress.finish(progressTicket);
+        progressTicket = null;
+    }
+    
+    /**
+     * Method generate graph using classic Erdos-Renyi G(n, p) algorithm with
+     * skipping over potenial edges that are not created. Probability of
+     * generating the next edge after k trials is: 
+     *          p*(1-p)^(k-1)
+     * 
+     * @param containerLoader
+     */
+    private void generateClassicERGnp(ContainerLoader container) {
+        Progress.start(progressTicket, (int) (n + n * n * p));
         Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
         NodeDraft[] nodes = new NodeDraft[n];
 
         // Creating n nodes
+        Progress.setDisplayName(progressTicket, "Creating n nodes...");
         for (int i = 0; i < n && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();
             node.setLabel("Node " + i);
@@ -66,8 +158,9 @@ public class ErdosRenyiGnp implements Generator {
             container.addNode(node);
             Progress.progress(progressTicket);
         }
-
+        
         // Linking every node with each other with probability p (no self-loops)
+        Progress.setDisplayName(progressTicket, "Linking nodes...");
         int k = -1, v = 1;
         while (v < n && !cancel) {
             double r = random.nextDouble();
@@ -85,9 +178,18 @@ public class ErdosRenyiGnp implements Generator {
                 Progress.progress(progressTicket);
             }
         }
-
+        
         Progress.finish(progressTicket);
         progressTicket = null;
+    }
+    
+    private boolean edgeExists(ContainerLoader container, NodeDraft node1, NodeDraft node2) {
+        return container.edgeExists(node1, node2) || container.edgeExists(node2, node1);
+    }
+    
+    private int countProgress(int c) {
+        if (c > 1) return (c * c) * ( c * c - 1) / 2 + countProgress(c - 2);
+        else return 0; 
     }
 
     public int getN() {
@@ -104,6 +206,14 @@ public class ErdosRenyiGnp implements Generator {
 
     public void setP(double p) {
         this.p = p;
+    }
+
+    public boolean isGridAlgorithm() {
+        return gridAlgorithm;
+    }
+
+    public void setGridAlgorithm(boolean gridAlgorithm) {
+        this.gridAlgorithm = gridAlgorithm;
     }
 
     @Override
