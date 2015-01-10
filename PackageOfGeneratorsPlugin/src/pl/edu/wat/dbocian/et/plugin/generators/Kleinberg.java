@@ -82,7 +82,8 @@ public class Kleinberg implements Generator {
         NodeDraft[][] nodes = new NodeDraft[n][n];
         boolean[][][][] edges = new boolean[n][n][n][n];
 
-        // Creating lattice n x n       
+        // Creating lattice n x n  
+        Progress.setDisplayName(progressTicket, "Generating n x n nodes...");
         for (int i = 0; i < n && !cancel; ++i) {
             for (int j = 0; j < n && !cancel; ++j) {
                 NodeDraft node = container.factory().newNodeDraft();
@@ -94,6 +95,7 @@ public class Kleinberg implements Generator {
         }
 
         // Creating edges from each node to all nodes within distance p
+        Progress.setDisplayName(progressTicket, "Generating local edges...");
         for (int i = 0; i < n && !cancel; ++i) {
             for (int j = 0; j < n && !cancel; ++j) {
                 for (int k = i - p; k <= i + p && !cancel; ++k) {
@@ -126,6 +128,7 @@ public class Kleinberg implements Generator {
             MLocal = q;
             M = 1;
         }
+        Progress.setDisplayName(progressTicket, "Generating long-range edges...");
         for (int mLocal = 0; mLocal < MLocal; mLocal++) {
             for (int i = 0; i < n && !cancel; ++i) {
                 for (int j = 0; j < n && !cancel; ++j) {
