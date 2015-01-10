@@ -114,7 +114,7 @@
                   <Component id="betaLabel" min="-2" max="-2" attributes="0"/>
                   <Component id="betaField" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="22" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

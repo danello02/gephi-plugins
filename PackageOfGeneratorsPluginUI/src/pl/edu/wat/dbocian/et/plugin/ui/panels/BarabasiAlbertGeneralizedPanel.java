@@ -5,15 +5,14 @@
  */
 package pl.edu.wat.dbocian.et.plugin.ui.panels;
 
-import javax.sound.midi.MidiFileFormat;
 import org.gephi.lib.validation.BetweenZeroAndOneValidator;
-import org.gephi.lib.validation.Multiple4NumberValidator;
 import org.gephi.lib.validation.PositiveNumberValidator;
 import org.netbeans.validation.api.Problems;
 import org.netbeans.validation.api.Validator;
 import org.netbeans.validation.api.builtin.Validators;
 import org.netbeans.validation.api.ui.ValidationGroup;
 import org.netbeans.validation.api.ui.ValidationPanel;
+import pl.edu.wat.dbocian.et.plugin.ui.validators.PositiveRealNumberValidator;
 import pl.edu.wat.dbocian.et.plugin.ui.validators.RealNumberValidator;
 
 /**
@@ -57,7 +56,7 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
         group.add(innerPanel.miField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new RealNumberValidator(innerPanel.miLabel.getText()));
         group.add(innerPanel.sigmaField, Validators.REQUIRE_NON_EMPTY_STRING,
-                new RealNumberValidator(innerPanel.sigmaLabel.getText()));
+                new PositiveRealNumberValidator(innerPanel.sigmaLabel.getText()));
         group.add(innerPanel.alphaField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new BetweenZeroAndOneValidator());
         group.add(innerPanel.betaField, Validators.REQUIRE_NON_EMPTY_STRING,

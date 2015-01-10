@@ -27,23 +27,24 @@ import org.netbeans.validation.api.Validator;
  * @author Daniel
  * 
  */
-public class RealNumberValidator implements Validator<String> {
+public class PositiveRealNumberValidator implements Validator<String> {
     private final String name;
 
-    public RealNumberValidator(String name) {
+    public PositiveRealNumberValidator(String name) {
         this.name = name;
     }    
     
     @Override
     public boolean validate(Problems problems, String compName, String model) {
-        boolean result = true;
+        boolean result;
         try {
             Double d = Double.parseDouble(model);
+            result = d >= 0.0;
         } catch (NumberFormatException e) {
             result = false;
         }
         if (!result) {
-            String message = name + " must be valid real number";
+            String message = name + " must be valid positive real number";
             problems.add(message);
         }
         return result;
