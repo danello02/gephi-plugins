@@ -39,6 +39,10 @@ import org.openide.util.lookup.ServiceProvider;
  * based on Cezary Bartosiak implementation
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  *
+ * N > K >= ln(N) >= 1
+ * K % 2 == 0
+ * 0 <= beta <= 1
+ * 
  * More info about algorithm:
  * http://en.wikipedia.org/wiki/Watts_and_Strogatz_model
  * http://www.inf.uni-konstanz.de/algo/publications/bb-eglrn-05.pdf
@@ -264,6 +268,22 @@ public class WattsStrogatzBeta implements Generator {
         this.beta = beta;
     }
 
+    public boolean isDependentProbability() {
+        return dependentProbability;
+    }
+
+    public void setDependentProbability(boolean dependentProbability) {
+        this.dependentProbability = dependentProbability;
+    }
+
+    public double getR() {
+        return r;
+    }
+
+    public void setR(double r) {
+        this.r = r;
+    }
+    
     @Override
     public String getName() {
         return "Watts-Strogatz Small World model Beta";
