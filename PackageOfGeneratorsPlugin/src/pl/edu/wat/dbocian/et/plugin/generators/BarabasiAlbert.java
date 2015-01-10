@@ -32,6 +32,7 @@ import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
+import pl.edu.wat.dbocian.et.plugin.ui.interfaces.BarabasiAlbertUI;
 
 /**
  * @author Daniel Bocian
@@ -358,11 +359,9 @@ public class BarabasiAlbert implements Generator {
         return "Barabasi-Albert Scale Free model";
     }
 
-    //TODO - zwracanie widoku
     @Override
     public GeneratorUI getUI() {
-        //return Lookup.getDefault().lookup(AgeingBAModelUI.class);
-        return null;
+        return Lookup.getDefault().lookup(BarabasiAlbertUI.class);
     }
 
     @Override
