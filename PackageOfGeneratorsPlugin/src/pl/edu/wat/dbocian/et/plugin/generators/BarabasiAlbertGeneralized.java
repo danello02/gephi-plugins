@@ -42,11 +42,16 @@ import org.openide.util.lookup.ServiceProvider;
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  *
  * N > 0
- * m0 > 0 M > 0 0 >= p >= 1 0 >= q >= 1 p + q <= 1
+ * m0 > 0 
+ * M > 0 
+ * 0 >= p >= 1 
+ * 0 >= q >= 1 
+ * p + q <= 1
  *
  * sigma2 > 0
  *
- * alfa > 0 beta > 0
+ * alfa > 0 
+ * beta > 0
  *
  * More info about algorithm:
  * http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model
@@ -65,7 +70,7 @@ public class BarabasiAlbertGeneralized implements Generator {
     private double q = 0.25;
 
     private boolean passingNodes = true;
-    
+
     private double mi = 10;
     private double sigma2 = 5;
 
@@ -83,15 +88,15 @@ public class BarabasiAlbertGeneralized implements Generator {
         int t = 1;
 
         // List of all ever existing nodes
-        List<NodeDraft> nodes = new ArrayList<NodeDraft>();
+        List<NodeDraft> nodes = new ArrayList<>();
 
         //List of currently existing nodes
-        List<Integer> nodeList = new ArrayList<Integer>();
+        List<Integer> nodeList = new ArrayList<>();
 
         List<Integer> degrees = new ArrayList<>();
 
         // List of nodes age - i.e. iteration left to die
-        List<Integer> nodeAges = new ArrayList<Integer>();
+        List<Integer> nodeAges = new ArrayList<>();
 
         // Map of edges with values meaning:
         // -1 - edge not exist
@@ -102,6 +107,7 @@ public class BarabasiAlbertGeneralized implements Generator {
         List<Integer> notFullNodes = new ArrayList<>();
 
         // Creating m0 isolated nodes
+        Progress.setDisplayName(progressTicket, "Generating m0 nodes...");
         for (int i = 0; i < m0 && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();
             node.setLabel("Node " + i);
@@ -109,7 +115,6 @@ public class BarabasiAlbertGeneralized implements Generator {
             nodeList.add(i);
             degrees.add(i, 0);
             nodeAges.add(i, randNodeAge(random));
-            System.out.println("Node: " + i + ", age: " + nodeAges.get(i));
             notFullNodes.add(i);
 
             if (passingNodes) {
@@ -127,6 +132,7 @@ public class BarabasiAlbertGeneralized implements Generator {
         int n = m0; // the number of currently existing nodes
         int allN = m0; //the nummer of ever existing nodes
         int ec = 0;  // the number of existing edges
+        Progress.setDisplayName(progressTicket, "Performing N steps of the algorithm...");
         for (int i = 0; i < N && !cancel; ++i, ++t) {
             double r = random.nextDouble();
             n = nodeList.size();
@@ -134,11 +140,9 @@ public class BarabasiAlbertGeneralized implements Generator {
             if (accelerated) {
                 Double Mb = Math.pow(n, beta);
                 M = Mb.intValue();
-                System.out.println("Iteration: " + i + " n: " + n + " M: " + M);
             }
 
             if (r <= p) { // adding M edges
-                System.out.println("\tIteration: " + i + " add M edges");
                 for (int m = 0; m < M && !cancel; ++m) {
                     if (ec == n * (n - 1) / 2) {
                         m = M; //end of loop
@@ -171,7 +175,6 @@ public class BarabasiAlbertGeneralized implements Generator {
                             }
 
                             if (b <= pki) {
-                                System.out.println("Create edge between: " + a + " and " + id);
                                 EdgeDraft edge = getEdge(container, nodes.get(a), nodes.get(id));
                                 if (edge == null) {
                                     edge = container.factory().newEdgeDraft();
@@ -190,7 +193,6 @@ public class BarabasiAlbertGeneralized implements Generator {
                     }
                 }
             } else if (r <= p + q) { // rewiring M edges
-                System.out.println("\tIteration: " + i + " rewire M edges");
                 if (ec == 0 || ec == n * (n - 1) / 2) {
                     continue;
                 }
@@ -239,7 +241,6 @@ public class BarabasiAlbertGeneralized implements Generator {
                         }
 
                         if (b <= pki) {
-                            System.out.println("Rewire " + a + "->" + l + " to " + a + "->" + id);
                             getEdge(container, nodes.get(a), nodes.get(l)).addTimeInterval(getEdgeStartTime(edges, a, l) + "", t + "");
                             setEdgeStartTime(edges, a, l, -1);
                             decreaseDegree(degrees, notFullNodes, l);
@@ -272,12 +273,9 @@ public class BarabasiAlbertGeneralized implements Generator {
                     }
                 }
             } else { // adding a new node with M edges
-                System.out.println("\tIteration: " + i + " add node");
-
                 Double Na = 1.0;
                 if (accelerated) {
                     Na = Math.pow(n, alpha);
-                    System.out.println("Iteration: " + i + " n: " + n + " Na: " + Na.intValue());
                 }
 
                 for (int na = 0; na < Na.intValue() && !cancel; na++) {
@@ -350,7 +348,6 @@ public class BarabasiAlbertGeneralized implements Generator {
                     int a = nodeAges.get(id) - 1;
                     nodeAges.set(id, a);
                     if (a == 0) { // Node will die
-                        System.out.println("Node: " + id + " will die in iteration: " + i);
                         n--;
                         nodeList.remove(j);
                         notFullNodes.remove((Integer) id);
@@ -444,7 +441,8 @@ public class BarabasiAlbertGeneralized implements Generator {
     }
 
     /**
-     * Method return random integer value with Normal distribution N(mi, sigma2).
+     * Method return random integer value with Normal distribution N(mi,
+     * sigma2). 
      * If value is < 1 then return 1.
      *
      * @return age
@@ -493,6 +491,54 @@ public class BarabasiAlbertGeneralized implements Generator {
 
     public void setQ(double q) {
         this.q = q;
+    }
+
+    public boolean isPassingNodes() {
+        return passingNodes;
+    }
+
+    public void setPassingNodes(boolean passingNodes) {
+        this.passingNodes = passingNodes;
+    }
+
+    public double getMi() {
+        return mi;
+    }
+
+    public void setMi(double mi) {
+        this.mi = mi;
+    }
+
+    public double getSigma2() {
+        return sigma2;
+    }
+
+    public void setSigma2(double sigma2) {
+        this.sigma2 = sigma2;
+    }
+
+    public boolean isAccelerated() {
+        return accelerated;
+    }
+
+    public void setAccelerated(boolean accelerated) {
+        this.accelerated = accelerated;
+    }
+
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(double alpha) {
+        this.alpha = alpha;
+    }
+
+    public double getBeta() {
+        return beta;
+    }
+
+    public void setBeta(double beta) {
+        this.beta = beta;
     }
 
     @Override
