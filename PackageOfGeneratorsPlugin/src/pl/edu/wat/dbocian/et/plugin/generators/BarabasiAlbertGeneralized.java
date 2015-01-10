@@ -33,7 +33,9 @@ import org.gephi.io.importer.api.EdgeDraft;
 import org.gephi.io.importer.api.NodeDraft;
 import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
+import pl.edu.wat.dbocian.et.plugin.ui.interfaces.BarabasiAlbertGeneralizedUI;
 
 /**
  * @author Daniel Bocian
@@ -69,12 +71,12 @@ public class BarabasiAlbertGeneralized implements Generator {
     private double p = 0.25;
     private double q = 0.25;
 
-    private boolean passingNodes = true;
+    private boolean passingNodes = false;
 
     private double mi = 10;
     private double sigma2 = 5;
 
-    private boolean accelerated = true;
+    private boolean accelerated = false;
     private double alpha = 0.5;
     private double beta = 0.4;
 
@@ -132,6 +134,7 @@ public class BarabasiAlbertGeneralized implements Generator {
         int n = m0; // the number of currently existing nodes
         int allN = m0; //the nummer of ever existing nodes
         int ec = 0;  // the number of existing edges
+        int Me = M; // edges to add/rewire
         Progress.setDisplayName(progressTicket, "Performing N steps of the algorithm...");
         for (int i = 0; i < N && !cancel; ++i, ++t) {
             double r = random.nextDouble();
@@ -139,13 +142,13 @@ public class BarabasiAlbertGeneralized implements Generator {
 
             if (accelerated) {
                 Double Mb = Math.pow(n, beta);
-                M = Mb.intValue();
+                Me = Mb.intValue();
             }
 
             if (r <= p) { // adding M edges
-                for (int m = 0; m < M && !cancel; ++m) {
+                for (int m = 0; m < Me && !cancel; ++m) {
                     if (ec == n * (n - 1) / 2) {
-                        m = M; //end of loop
+                        m = Me; //end of loop
                     } else {
                         // Randomly choosen source node
                         int a = notFullNodes.get(random.nextInt(notFullNodes.size()));
@@ -546,9 +549,9 @@ public class BarabasiAlbertGeneralized implements Generator {
         return "Generalized Barabasi-Albert Scale Free model";
     }
 
-    //TODO - zwracanie widoku
     @Override
     public GeneratorUI getUI() {
+        //return Lookup.getDefault().lookup(BarabasiAlbertGeneralizedUI.class);
         return null;
     }
 
