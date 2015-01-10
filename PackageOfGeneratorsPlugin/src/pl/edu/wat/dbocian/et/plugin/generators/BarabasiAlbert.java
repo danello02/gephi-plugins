@@ -39,6 +39,10 @@ import org.openide.util.lookup.ServiceProvider;
  * based on Cezary Bartosiak implementation:
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  *
+ * N  > 0
+ * m0 > 0 && m0 <  N
+ * M  > 0 && M  <= m0
+ * 
  * More info about algorithm:
  * http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model
  *
@@ -91,6 +95,7 @@ public class BarabasiAlbert implements Generator {
         double[][] age = new double[N][3];
 
         //Create initial m0 nodes
+        Progress.setDisplayName(progressTicket, "Generating full graph with m0 nodes...");
         for (int i = 0; i < m0 && !cancel; i++) {
             NodeDraft node = container.factory().newNodeDraft();
             node.setLabel("Node " + i);
@@ -119,6 +124,7 @@ public class BarabasiAlbert implements Generator {
         }
 
         //Add other nodes with M edges for each one
+        Progress.setDisplayName(progressTicket, "Generating N-m0 nodes with M edges...");
         for (int i = m0; i < N && !cancel; i++, vt++, et++) {
             //Add node 
             NodeDraft node = container.factory().newNodeDraft();
