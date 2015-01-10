@@ -282,7 +282,7 @@ public class BarabasiAlbertPanel extends javax.swing.JPanel {
         showDataFields();
     }//GEN-LAST:event_NoneAgeingActionPerformed
 
-    public void showDataFields() {
+    public final void showDataFields() {
         if (NoneAgeing.isSelected()) {
             randomiseCheckBox.setVisible(false);
             randomiseLabel.setVisible(false);
@@ -373,7 +373,7 @@ public class BarabasiAlbertPanel extends javax.swing.JPanel {
                 Integer m0 = Integer.parseInt(panel.M0Field.getText());
                 Integer M = Integer.parseInt(panel.MField.getText());
                 result = M <= m0;
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
             }
             if (!result) {
                 //String message = "M musi być mniejsze lub równe M0";
@@ -401,7 +401,7 @@ public class BarabasiAlbertPanel extends javax.swing.JPanel {
                 Integer N = Integer.parseInt(panel.NField.getText());
                 Integer M0 = Integer.parseInt(panel.M0Field.getText());
                 result = M0 <= N;
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
             }
             if (!result) {
                 //String message = "M0 musi być mniejsze lub równe N";
@@ -436,10 +436,10 @@ public class BarabasiAlbertPanel extends javax.swing.JPanel {
                     result = s <= 1.0;
                     result &= s >= 0.0;
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 //message = "Interwał starzenia musi być liczbą";
                 message = "Getting old interval must be a number";
-                e.printStackTrace();
+                problems.add(message);
             }
 
             if (!result) {
