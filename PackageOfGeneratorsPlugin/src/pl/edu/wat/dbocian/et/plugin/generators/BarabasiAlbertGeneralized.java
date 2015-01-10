@@ -551,8 +551,7 @@ public class BarabasiAlbertGeneralized implements Generator {
 
     @Override
     public GeneratorUI getUI() {
-        //return Lookup.getDefault().lookup(BarabasiAlbertGeneralizedUI.class);
-        return null;
+        return Lookup.getDefault().lookup(BarabasiAlbertGeneralizedUI.class);
     }
 
     @Override
