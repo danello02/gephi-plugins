@@ -313,7 +313,7 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
             } catch (NumberFormatException e) {
             }
             if (!result) {
-                String message = "<html>M &lt;= m0</html>";
+                String message = "<html>M &le; m0</html>";
                 problems.add(message);
             }
             
