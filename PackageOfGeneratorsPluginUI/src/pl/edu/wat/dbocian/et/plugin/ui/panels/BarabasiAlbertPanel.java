@@ -20,13 +20,13 @@
  */
 package pl.edu.wat.dbocian.et.plugin.ui.panels;
 
-import org.gephi.lib.validation.BetweenZeroAndOneValidator;
 import org.gephi.lib.validation.PositiveNumberValidator;
 import org.netbeans.validation.api.Problems;
 import org.netbeans.validation.api.Validator;
 import org.netbeans.validation.api.builtin.Validators;
 import org.netbeans.validation.api.ui.ValidationGroup;
 import org.netbeans.validation.api.ui.ValidationPanel;
+import pl.edu.wat.dbocian.et.plugin.ui.validators.BetweenZeroAndOneValidator;
 
 /**
  * @author Daniel Bocian
@@ -56,8 +56,8 @@ public class BarabasiAlbertPanel extends javax.swing.JPanel {
         group.add(innerPanel.M0Field, Validators.REQUIRE_NON_EMPTY_STRING, new M0Validator(innerPanel));
         group.add(innerPanel.MField, Validators.REQUIRE_NON_EMPTY_STRING, new PositiveNumberValidator());
         group.add(innerPanel.MField, Validators.REQUIRE_NON_EMPTY_STRING, new MValidator(innerPanel));
-        group.add(innerPanel.startAge, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new BetweenZeroAndOneValidator());
-        group.add(innerPanel.growingInterval, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new BetweenZeroAndOneValidator());
+        group.add(innerPanel.startAge, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new BetweenZeroAndOneValidator(innerPanel.startAgeLabel.getText()));
+        group.add(innerPanel.growingInterval, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new BetweenZeroAndOneValidator(innerPanel.growingIntervalLabel.getText()));
         group.add(innerPanel.ageingInterval, Validators.REQUIRE_NON_NEGATIVE_NUMBER, new GettingOldParameterValidator(innerPanel));
 
         return valPanel;

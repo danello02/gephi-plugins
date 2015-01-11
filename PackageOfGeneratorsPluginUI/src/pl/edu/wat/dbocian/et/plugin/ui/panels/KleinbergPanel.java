@@ -218,12 +218,13 @@ public class KleinbergPanel extends javax.swing.JPanel {
 
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
 
             try {
                 Integer n = Integer.parseInt(innerPanel.nField.getText());
                 result = n >= 2;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>n &#8805; 2</html>";
@@ -244,13 +245,14 @@ public class KleinbergPanel extends javax.swing.JPanel {
 
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
 
             try {
                 Integer n = Integer.parseInt(innerPanel.nField.getText());
                 Integer p = Integer.parseInt(innerPanel.pField.getText());
                 result = p >= 1 && p <= 2 * n - 2;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>1 &le; p &le; 2n - 2</html>";
@@ -271,7 +273,7 @@ public class KleinbergPanel extends javax.swing.JPanel {
 
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
 
             try {
                 Integer n = Integer.parseInt(innerPanel.nField.getText());
@@ -283,6 +285,7 @@ public class KleinbergPanel extends javax.swing.JPanel {
                     result = q >= 0 && q <= (2 * n - p - 3) * (2 * n - p) / 2 + 1;
                 }
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message
@@ -306,12 +309,13 @@ public class KleinbergPanel extends javax.swing.JPanel {
 
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
 
             try {
                 Double r = Double.parseDouble(innerPanel.rField.getText());
                 result = r >= 0;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>r &ge; 0</html>";

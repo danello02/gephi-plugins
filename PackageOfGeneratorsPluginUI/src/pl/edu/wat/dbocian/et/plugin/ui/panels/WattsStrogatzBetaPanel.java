@@ -20,12 +20,12 @@
  */
 package pl.edu.wat.dbocian.et.plugin.ui.panels;
 
-import org.gephi.lib.validation.BetweenZeroAndOneValidator;
 import org.netbeans.validation.api.Problems;
 import org.netbeans.validation.api.Validator;
 import org.netbeans.validation.api.builtin.Validators;
 import org.netbeans.validation.api.ui.ValidationGroup;
 import org.netbeans.validation.api.ui.ValidationPanel;
+import pl.edu.wat.dbocian.et.plugin.ui.validators.BetweenZeroAndOneValidator;
 import pl.edu.wat.dbocian.et.plugin.ui.validators.RealNumberValidator;
 
 /**
@@ -55,7 +55,7 @@ public class WattsStrogatzBetaPanel extends javax.swing.JPanel {
         group.add(innerPanel.KField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new KValidator(innerPanel));
         group.add(innerPanel.betaField, Validators.REQUIRE_NON_EMPTY_STRING,
-                new BetweenZeroAndOneValidator());
+                new BetweenZeroAndOneValidator(innerPanel.betaLabel.getText()));
         group.add(innerPanel.rField, Validators.REQUIRE_NON_EMPTY_STRING, 
                 new RealNumberValidator(innerPanel.rLabel.getText()));
 
@@ -163,7 +163,7 @@ public class WattsStrogatzBetaPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(rLabel)
                     .addComponent(rField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -195,13 +195,14 @@ public class WattsStrogatzBetaPanel extends javax.swing.JPanel {
 
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
 
             try {
                 Integer N = Integer.parseInt(innerPanel.NField.getText());
                 Integer K = Integer.parseInt(innerPanel.KField.getText());
                 result = N > K;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>N &gt; K</html>";
@@ -222,7 +223,7 @@ public class WattsStrogatzBetaPanel extends javax.swing.JPanel {
 
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
 
             try {
                 Integer N = Integer.parseInt(innerPanel.NField.getText());
@@ -230,6 +231,7 @@ public class WattsStrogatzBetaPanel extends javax.swing.JPanel {
                 Double lnN = Math.log(N);
                 result = K >= lnN && lnN >= 1 && K % 2 == 0;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>K &ge; ln(N) &ge; 1 and K is even</html>";

@@ -5,13 +5,13 @@
  */
 package pl.edu.wat.dbocian.et.plugin.ui.panels;
 
-import org.gephi.lib.validation.BetweenZeroAndOneValidator;
 import org.gephi.lib.validation.PositiveNumberValidator;
 import org.netbeans.validation.api.Problems;
 import org.netbeans.validation.api.Validator;
 import org.netbeans.validation.api.builtin.Validators;
 import org.netbeans.validation.api.ui.ValidationGroup;
 import org.netbeans.validation.api.ui.ValidationPanel;
+import pl.edu.wat.dbocian.et.plugin.ui.validators.BetweenZeroAndOneValidator;
 import pl.edu.wat.dbocian.et.plugin.ui.validators.PositiveRealNumberValidator;
 import pl.edu.wat.dbocian.et.plugin.ui.validators.RealNumberValidator;
 
@@ -46,11 +46,11 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
         group.add(innerPanel.MField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new MValidator(innerPanel));
         group.add(innerPanel.pField, Validators.REQUIRE_NON_EMPTY_STRING,
-                new BetweenZeroAndOneValidator());
+                new BetweenZeroAndOneValidator(innerPanel.pLabel.getText()));
         group.add(innerPanel.pField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new pqValidator(innerPanel));
         group.add(innerPanel.qField, Validators.REQUIRE_NON_EMPTY_STRING,
-                new BetweenZeroAndOneValidator());
+                new BetweenZeroAndOneValidator(innerPanel.qLabel.getText()));
         group.add(innerPanel.qField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new pqValidator(innerPanel));
         group.add(innerPanel.miField, Validators.REQUIRE_NON_EMPTY_STRING,
@@ -58,9 +58,9 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
         group.add(innerPanel.sigmaField, Validators.REQUIRE_NON_EMPTY_STRING,
                 new PositiveRealNumberValidator(innerPanel.sigmaLabel.getText()));
         group.add(innerPanel.alphaField, Validators.REQUIRE_NON_EMPTY_STRING,
-                new BetweenZeroAndOneValidator());
+                new BetweenZeroAndOneValidator(innerPanel.alphaLabel.getText()));
         group.add(innerPanel.betaField, Validators.REQUIRE_NON_EMPTY_STRING,
-                new BetweenZeroAndOneValidator());
+                new BetweenZeroAndOneValidator(innerPanel.betaLabel.getText()));
         
         return validationPanel;
     }
@@ -254,7 +254,7 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(betaLabel)
                     .addComponent(betaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         NField.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(BarabasiAlbertGeneralizedPanel.class, "BarabasiAlbertGeneralizedPanel.NField.AccessibleContext.accessibleName")); // NOI18N
@@ -304,13 +304,14 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
         
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
             
             try {
                 Integer m0 = Integer.parseInt(innerPanel.m0Field.getText());
                 Integer M = Integer.parseInt(innerPanel.MField.getText());
                 result = M <= m0;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>M &le; m0</html>";
@@ -331,13 +332,14 @@ public class BarabasiAlbertGeneralizedPanel extends javax.swing.JPanel {
         
         @Override
         public boolean validate(Problems problems, String compName, String model) {
-            boolean result = false;
+            boolean result;
             
             try {
                 Double p = Double.parseDouble(innerPanel.pField.getText());
                 Double q = Double.parseDouble(innerPanel.qField.getText());
                 result = p + q < 1.0;
             } catch (NumberFormatException e) {
+                result = false;
             }
             if (!result) {
                 String message = "<html>p + q &lt; 1.0</html>";
