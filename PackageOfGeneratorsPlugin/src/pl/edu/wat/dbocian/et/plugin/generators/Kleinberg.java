@@ -30,7 +30,9 @@ import org.gephi.io.importer.api.EdgeDraft;
 import org.gephi.io.importer.api.NodeDraft;
 import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
+import pl.edu.wat.dbocian.et.plugin.ui.interfaces.KleinbergUI;
 
 /**
  * @author Daniel Bocian
@@ -298,10 +300,9 @@ public class Kleinberg implements Generator {
         this.S = S;
     }
 
-    //TODO - zwracanie widoku
     @Override
     public GeneratorUI getUI() {
-        return null;
+        return Lookup.getDefault().lookup(KleinbergUI.class);
     }
 
     @Override
