@@ -31,7 +31,9 @@ import org.gephi.io.importer.api.EdgeDraft;
 import org.gephi.io.importer.api.NodeDraft;
 import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
+import pl.edu.wat.dbocian.et.plugin.ui.interfaces.WattsStrogatzBetaUI;
 
 /**
  * @author Daniel Bocian
@@ -97,7 +99,7 @@ public class WattsStrogatzBeta implements Generator {
         // Creating a regular ring lattice
         Progress.setDisplayName(progressTicket, "Generating N nodes...");
         for (int i = 0; i < N && !cancel; ++i) {
-            NodeDraft node = container.factory().newNodeDraft();
+            NodeDraft node = container.factory().newNodeDraft();    
             node.setLabel("Node " + i);
             node.addTimeInterval(i + "", N + "");
             nodes[i] = node;
@@ -288,10 +290,9 @@ public class WattsStrogatzBeta implements Generator {
         return "Watts-Strogatz Small World model Beta";
     }
 
-    //TODO - zwracanie widoku
     @Override
     public GeneratorUI getUI() {
-        return null;
+        return Lookup.getDefault().lookup(WattsStrogatzBetaUI.class);
     }
 
     @Override
