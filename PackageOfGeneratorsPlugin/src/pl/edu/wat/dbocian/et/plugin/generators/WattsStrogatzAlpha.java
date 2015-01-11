@@ -31,8 +31,10 @@ import org.gephi.io.importer.api.EdgeDraft;
 import org.gephi.io.importer.api.NodeDraft;
 import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import pl.edu.wat.dbocian.et.plugin.data.BasicEdge;
+import pl.edu.wat.dbocian.et.plugin.ui.interfaces.WattsStrogatzAlphaUI;
 
 /**
  * @author Daniel Bocian
@@ -53,7 +55,10 @@ import pl.edu.wat.dbocian.et.plugin.data.BasicEdge;
  */
 @ServiceProvider(service = Generator.class)
 public class WattsStrogatzAlpha implements Generator {
-
+    public static final int RING = 0;
+    public static final int GNP = 1;
+    public static final int GNM = 2;
+    
     private boolean cancel = false;
     private ProgressTicket progressTicket;
 
@@ -66,7 +71,7 @@ public class WattsStrogatzAlpha implements Generator {
     // 0 - regular ring (default)
     // 1 - G(n, p)
     // 2 - G(n, m)
-    private int topology = 2;
+    private int topology = 0;
     private double p = 0.05;
     private int m = 20;
 
@@ -77,17 +82,17 @@ public class WattsStrogatzAlpha implements Generator {
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
         NodeDraft[] nodes = new NodeDraft[n];
-        int ec = 0;
+        int ec;
 
         // Create nodes with specified topology
         switch (topology) {
-            case 1: 
+            case GNP: 
                 Double progressCalc = n * (n - 1) * p / 2;
                 Progress.start(progressTicket, n + progressCalc.intValue() + n * k / 2);
                 ec = generateGnp(container, nodes);
             break;
                
-            case 2: 
+            case GNM: 
                 Progress.start(progressTicket, n + n * n / 2 + m + n * k / 2);
                 ec = generateGnm(container, nodes);
             break;
@@ -342,10 +347,9 @@ public class WattsStrogatzAlpha implements Generator {
         return "Watts-Strogatz Small World model Alpha";
     }
 
-    //TODO - zwracanie widoku
     @Override
     public GeneratorUI getUI() {
-        return null;
+        return Lookup.getDefault().lookup(WattsStrogatzAlphaUI.class);
     }
 
     @Override
