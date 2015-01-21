@@ -51,7 +51,7 @@ import pl.edu.wat.dbocian.et.plugin.ui.interfaces.WattsStrogatzAlphaUI;
  * https://github.com/cbartosiak/gephi-plugins/tree/complex-generators
  * 
  * More info about algorithm:
- * http://www.lucamoroni.net/cdf-simulations/duncan-watts-alpha-model/
+ * http://www.lucamoroni.it/cdf-simulations/duncan-watts-alpha-model/
  */
 @ServiceProvider(service = Generator.class)
 public class WattsStrogatzAlpha implements Generator {
