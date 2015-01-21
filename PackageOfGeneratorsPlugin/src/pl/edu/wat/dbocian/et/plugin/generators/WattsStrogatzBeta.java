@@ -164,6 +164,8 @@ public class WattsStrogatzBeta implements Generator {
                 }
             }
         }
+        Progress.finish(progressTicket);
+        progressTicket = null;
     }
     
     /**
