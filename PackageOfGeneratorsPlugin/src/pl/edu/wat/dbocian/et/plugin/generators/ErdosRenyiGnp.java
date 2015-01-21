@@ -87,14 +87,13 @@ public class ErdosRenyiGnp implements Generator {
         Progress.start(progressTicket, n * n + countProgress(n));
         Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
-        
+
         NodeDraft[][] nodes = new NodeDraft[n][n];
-        
+
         Double d = (double) n / 2;
-        int delta = - d.intValue() * SPACE_SIZE;
-        int maxT = n / 2 + 1;
-        
-            
+        int delta = -d.intValue() * SPACE_SIZE;
+        int maxT = (n + 1) / 2 - 1;
+
         Progress.setDisplayName(progressTicket, "Creating n nodes...");
         for (int i = 0; i < n && !cancel; i++) {
             for (int j = 0; j < n && !cancel; j++) {
@@ -103,21 +102,28 @@ public class ErdosRenyiGnp implements Generator {
                 node.setX(delta + i * SPACE_SIZE);
                 node.setY(delta + j * SPACE_SIZE);
                 nodes[i][j] = node;
-                node.addTimeInterval("0", maxT + "");
+                int timeI = Math.abs(i - n / 2);
+                int timeJ = Math.abs(j - n / 2);
+                if (n % 2 == 0) {
+                    timeI = i < n / 2 ? timeI - 1 : timeI;
+                    timeJ = j < n / 2 ? timeJ - 1 : timeJ;
+                }
+                int time = Math.max(timeI, timeJ);
+                
+                node.addTimeInterval(time + "", maxT + "");
                 container.addNode(node);
                 Progress.progress(progressTicket);
             }
         }
-        
-        int t = 0;   
-        for (int s = 0; s <= n / 2 && !cancel; s++) {
-            t++;
+
+        int t = 0;
+        for (int s = 1; s <= n / 2 && !cancel; s++) {
             int min = n / 2 - s;
             int max = (n + 1) / 2 + s;
             for (int i = min; i < max && !cancel; i++) {
                 for (int j = min; j < max && !cancel; j++) {
-                    for (int k = i; k < max && ! cancel; k++) {
-                        for (int l = k == i? j + 1 : min; l < max && !cancel; l++) {
+                    for (int k = i; k < max && !cancel; k++) {
+                        for (int l = k == i ? j + 1 : min; l < max && !cancel; l++) {
                             if (random.nextDouble() < p && !edgeExists(container, nodes[i][j], nodes[k][l])) {
                                 EdgeDraft edge = container.factory().newEdgeDraft();
                                 edge.setSource(nodes[i][j]);
@@ -127,11 +133,12 @@ public class ErdosRenyiGnp implements Generator {
                             }
                             Progress.progress(progressTicket);
                         }
-                    }                    
+                    }
                 }
             }
-        }     
-        
+            t++;
+        }
+
         Progress.finish(progressTicket);
         progressTicket = null;
     }
