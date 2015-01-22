@@ -44,7 +44,6 @@ import pl.edu.wat.dbocian.et.plugin.ui.interfaces.WattsStrogatzAlphaUI;
  * 
  * 0 <= p <= 1
  * m >= 0
- * m <= n * (n - 1) / 2
  * m <= n * k / 2
  * 
  * based on Cezary Bartosiak implementation:

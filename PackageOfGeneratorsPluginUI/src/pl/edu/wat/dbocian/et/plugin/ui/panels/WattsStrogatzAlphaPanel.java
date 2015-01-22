@@ -303,13 +303,12 @@ public class WattsStrogatzAlphaPanel extends javax.swing.JPanel {
                 Integer m = Integer.parseInt(innerPanel.mField.getText());
                 Integer n = Integer.parseInt(innerPanel.nField.getText());
                 Integer k = Integer.parseInt(innerPanel.kField.getText());
-                result = m >= 0 && m <= n * (n - 1) / 2 && m <= n * k / 2;
+                result = m >= 0 && m <= n * k / 2;
             } catch (NumberFormatException e) {
                 result = false;
             }
             if (!result) {
                 String message = "<html>m &ge; 0<br>"
-                        + "m &le; n * (n - 1) / 2<br>"
                         + "m &le; n * k / 2</html>";
                 problems.add(message);
             }
