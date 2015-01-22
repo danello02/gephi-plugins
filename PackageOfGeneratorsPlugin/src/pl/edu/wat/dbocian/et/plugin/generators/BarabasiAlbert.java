@@ -218,8 +218,8 @@ public class BarabasiAlbert implements Generator {
                                     age[j][0] += age[j][1];
                                 }
                             } else if (age[j][2] >= 0.0) {
-                                if (age[j][0] - age[j][2] < 0.2) {
-                                    age[j][0] = 0.2;
+                                if (age[j][0] - age[j][2] < startAge) {
+                                    age[j][0] = startAge;
                                     age[j][2] = -1.0;
                                 } else {
                                     age[j][0] -= age[j][2];
@@ -241,7 +241,7 @@ public class BarabasiAlbert implements Generator {
                     case 3:
                         //Homographic transformations
                         for (int j = 0; j < i && !cancel; j++) {
-                            age[j][0] = age[j][1] / ++age[j][2];
+                            age[j][0] = age[j][1] / age[j][2]++;
                             if (Double.isInfinite(age[j][0])) {
                                 age[j][0] = Double.MIN_VALUE;
                             }
