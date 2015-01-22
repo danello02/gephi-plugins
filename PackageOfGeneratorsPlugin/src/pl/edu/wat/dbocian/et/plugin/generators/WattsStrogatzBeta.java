@@ -61,7 +61,7 @@ public class WattsStrogatzBeta implements Generator {
 
     // Will probabilty depend on degree
     private boolean dependentProbability = false;
-    private double r = -50;
+    private double r = -0.5;
 
     @Override
     public void generate(ContainerLoader container) {
@@ -120,48 +120,54 @@ public class WattsStrogatzBeta implements Generator {
 
         // Rewiring edges
         Progress.setDisplayName(progressTicket, "Rewiring edges...");
-        for (int i = 0; i < N && !cancel; ++i) {
-            // Get list of nodes not connected to i
-            double sum = 0.0;
-            List<Integer> allowed = new ArrayList<>();
-            for (int n = 0; n < N && !cancel; n++) {
-                if (n != i && !edgeExists(container, nodes[i], nodes[n])) {
-                    sum += Math.pow(degrees[n], r);
-                    allowed.add(n);
-                }
-            }
-            
-            for (int j = 1; j <= K / 2 && !cancel; ++j) {                
-                if (random.nextDouble() <= beta) {
-                    double rand = random.nextDouble() * sum;
-                    double p = 0.0;
-                    for (int n = 0; n < allowed.size() && !cancel; n++) {
-                        p += Math.pow(degrees[allowed.get(n)], r);
-                        
-                        // If find node or this is last node (protection for numerical error)
-                        if (rand <= p || n == allowed.size() - 1) {
-                            int nodeId = allowed.get(n);
-                            EdgeDraft edge = container.factory().newEdgeDraft();
-                            edge.setSource(nodes[i]);
-                            edge.setTarget(nodes[nodeId]);
-                            sum -= Math.pow(degrees[nodeId], r);
-                            degrees[nodeId]++;
-                            allowed.remove(n);
-                            
-                            container.addEdge(edge);
-                            
-                            // End of loop
-                            n = allowed.size();
-                        }
+        int s = -1;
+        int i = 0, j;
+        while (i < N && !cancel) {
+            double q = random.nextDouble();
+            Double d = Math.log10(1 - q) / Math.log10(1 - beta);
+            //calc next edge to rewire
+            s = s + 1 + d.intValue();
+            i = s / (K / 2);
+            j = 1 + s % (K / 2);
+	                        
+            if (i < N) {  
+                // Get list of nodes not connected to i
+                double sum = 0.0;
+                List<Integer> allowed = new ArrayList<>();
+                for (int n = 0; n < N && !cancel; n++) {
+                    if (n != i && !edgeExists(container, nodes[i], nodes[n])) {
+                        sum += Math.pow(degrees[n], r);
+                        allowed.add(n);
                     }
-                    
-                    int nodeId = (i + j) % N;
-                    container.removeEdge(getEdge(container, nodes[i], nodes[nodeId]));
-                    degrees[nodeId]--;
-                    allowed.add(nodeId);
-                    
-                    Progress.progress(progressTicket);
                 }
+                
+                double rand = random.nextDouble() * sum;
+                double p = 0.0;
+                for (int n = 0; n < allowed.size() && !cancel; n++) {
+                    p += Math.pow(degrees[allowed.get(n)], r);
+                    
+                    // If find node or this is last node (protection for numerical error)
+                    if (rand <= p || n == allowed.size() - 1) {
+                        int nodeId = allowed.get(n);
+                        EdgeDraft edge = container.factory().newEdgeDraft();
+                        edge.setSource(nodes[i]);
+                        edge.setTarget(nodes[nodeId]);
+                        sum -= Math.pow(degrees[nodeId], r);
+                        degrees[nodeId]++;
+                        allowed.remove(n);
+                        
+                        container.addEdge(edge);
+                        
+                        // End of loop
+                        n = allowed.size();
+                    }
+                }
+                
+                int nodeId = (i + j) % N;
+                container.removeEdge(getEdge(container, nodes[i], nodes[nodeId]));
+                degrees[nodeId]--;
+                
+                Progress.progress(progressTicket);
             }
         }
         Progress.finish(progressTicket);
@@ -209,8 +215,8 @@ public class WattsStrogatzBeta implements Generator {
         int s = -1;
         int i = 0, j;
         while (i < N && !cancel) {
-            double r = random.nextDouble();
-            Double d = Math.log10(1 - r) / Math.log10(1 - beta);
+            double q = random.nextDouble();
+            Double d = Math.log10(1 - q) / Math.log10(1 - beta);
             //calc next edge to rewire
             s = s + 1 + d.intValue();
             i = s / (K / 2);
