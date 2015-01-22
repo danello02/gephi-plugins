@@ -94,7 +94,7 @@ public class ErdosRenyiGnp implements Generator {
         int delta = -d.intValue() * SPACE_SIZE;
         int maxT = (n + 1) / 2 - 1;
 
-        Progress.setDisplayName(progressTicket, "Creating n nodes...");
+        Progress.setDisplayName(progressTicket, "Creating n x n nodes...");
         for (int i = 0; i < n && !cancel; i++) {
             for (int j = 0; j < n && !cancel; j++) {
                 NodeDraft node = container.factory().newNodeDraft();
