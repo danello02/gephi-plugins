@@ -206,11 +206,11 @@ public class Kleinberg implements Generator {
         if (edges[i][j][k][l]) {
             return 1;
         }
-        int d = 1;
+        int d;
         if (torusBased) {
-            gridDtb(i, j, k, l);
+            d = gridDtb(i, j, k, l);
         } else {
-            gridD(i, j, k, l);
+            d = gridD(i, j, k, l);
         }
         if (s == 0 || d == 1) {
             return d;
