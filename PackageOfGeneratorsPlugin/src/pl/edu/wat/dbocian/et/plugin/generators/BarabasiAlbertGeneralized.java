@@ -279,6 +279,9 @@ public class BarabasiAlbertGeneralized implements Generator {
                 Double Na = 1.0;
                 if (accelerated) {
                     Na = Math.pow(n, alpha);
+                    
+                    Double Mb = Math.pow(n, beta);
+                    Me = Mb.intValue();
                 }
 
                 for (int na = 0; na < Na.intValue() && !cancel; na++) {
@@ -287,7 +290,7 @@ public class BarabasiAlbertGeneralized implements Generator {
                     nodes.add(allN, node);
                     degrees.add(allN, 0);
                     nodeAges.add(allN, randNodeAge(random));
-                    if (nodeList.size() > M) {
+                    if (nodeList.size() > Me) {
                         notFullNodes.add(allN);
                     }
 
@@ -307,7 +310,7 @@ public class BarabasiAlbertGeneralized implements Generator {
                         sum += degrees.get(nodeList.get(j));
                     }
                     sum += nodeList.size();
-                    for (int m = 0; m < M && m < nodeList.size() && !cancel; ++m) {
+                    for (int m = 0; m < Me && m < nodeList.size() && !cancel; ++m) {
                         r = random.nextDouble();
                         double pki = 0.0;
 
