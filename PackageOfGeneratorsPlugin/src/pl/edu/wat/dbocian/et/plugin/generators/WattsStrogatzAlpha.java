@@ -120,18 +120,16 @@ public class WattsStrogatzAlpha implements Generator {
                 double r = random.nextDouble();
                 double pij = 0.0;
                 for (int j = 0; j < n && !cancel; ++j) {
-                    if (Rij[j] > 0.0) {
-                        pij += Rij[j] / sumRij;
-                        if (r <= pij) {
-                            EdgeDraft edge = container.factory().newEdgeDraft();
-                            edge.setSource(nodes[i]);
-                            edge.setTarget(nodes[j]);
-                            container.addEdge(edge);
-                            ec++;
+                    pij += Rij[j] / sumRij;
+                    if (r <= pij) {
+                        EdgeDraft edge = container.factory().newEdgeDraft();
+                        edge.setSource(nodes[i]);
+                        edge.setTarget(nodes[j]);
+                        container.addEdge(edge);
+                        ec++;
 
-                            Progress.progress(progressTicket);
-                            j = n;
-                        }
+                        Progress.progress(progressTicket);
+                        j = n;
                     }
                 }
             }
