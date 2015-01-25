@@ -75,10 +75,14 @@ public class Kleinberg implements Generator {
     public void generate(ContainerLoader container) {
         if (!local) {
             S = 0;
+            Progress.start(progressTicket, n * n + n * n * (2 * p + 1) * (2 * p + 1)
+                + (int) Math.pow(n, 4) + n * n * q);
+        } else {
+            Progress.start(progressTicket, n * n + n * n * (2 * p + 1) * (2 * p + 1)
+                + ((int) Math.pow(n, 4) + n * n)* q);
         }
 
-        Progress.start(progressTicket, n * n + n * n * (2 * p + 1) * (2 * p + 1)
-                + (int) Math.pow(n, 4) + n * n * q);
+        
         Random random = new Random();
 
         NodeDraft[][] nodes = new NodeDraft[n][n];
