@@ -255,6 +255,8 @@ public class BarabasiAlbert implements Generator {
                 }
             }
         }
+        Progress.finish(progressTicket);
+        progressTicket = null;
     }
 
     private double[] createAgeData() {
