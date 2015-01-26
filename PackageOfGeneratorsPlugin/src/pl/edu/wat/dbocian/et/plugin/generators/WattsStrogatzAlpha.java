@@ -76,7 +76,6 @@ public class WattsStrogatzAlpha implements Generator {
 
     @Override
     public void generate(ContainerLoader container) {
-        Progress.start(progressTicket, n + n + n * k / 2);
         Random random = new Random();
         container.setEdgeDefault(EdgeDefault.UNDIRECTED);
 
