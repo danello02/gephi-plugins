@@ -216,14 +216,17 @@ public class Kleinberg implements Generator {
         } else {
             d = gridD(i, j, k, l);
         }
-        if (s == 0 || d == 1) {
+        if (s == 0 || d <= 2) {
             return d;
         }
         List<List<Integer>> neighbours = getNeighboursForNode(edges, i, j);
         for (int m = 0; m < neighbours.size() && !cancel; m++) {
             List<Integer> node = neighbours.get(m);
-            int localR = localD(edges, s - 1, node.get(0), node.get(1), k, l);
-            d = localR < d ? localR : d;
+            int localR = 1 + localD(edges, s - 1, node.get(0), node.get(1), k, l);
+            if (localR < d) {
+                d = localR;
+                if (d == 2) m = neighbours.size();
+            }
         }
         return d;
     }
