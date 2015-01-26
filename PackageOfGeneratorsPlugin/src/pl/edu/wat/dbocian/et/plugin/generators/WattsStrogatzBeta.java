@@ -101,7 +101,6 @@ public class WattsStrogatzBeta implements Generator {
         for (int i = 0; i < N && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();    
             node.setLabel("Node " + i);
-            node.addTimeInterval(i + "", N + "");
             nodes[i] = node;
             container.addNode(node);
             Progress.progress(progressTicket);
@@ -194,7 +193,6 @@ public class WattsStrogatzBeta implements Generator {
         for (int i = 0; i < N && !cancel; ++i) {
             NodeDraft node = container.factory().newNodeDraft();
             node.setLabel("Node " + i);
-            node.addTimeInterval(i + "", N + "");
             nodes[i] = node;
             container.addNode(node);
             Progress.progress(progressTicket);
